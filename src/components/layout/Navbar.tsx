@@ -31,7 +31,7 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
+        <nav className="hidden md:flex items-center space-x-6">
           <Link to="/" className="font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
             Home
           </Link>
@@ -40,6 +40,15 @@ const Navbar = () => {
           </Link>
           <Link to="/services" className="font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
             Services
+          </Link>
+          <Link to="/harvesting" className="font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
+            Harvesting
+          </Link>
+          <Link to="/equipment" className="font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
+            Equipment Rental
+          </Link>
+          <Link to="/urban-farming" className="font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
+            Urban Farming
           </Link>
           <Link to="/marketplace" className="font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
             AgriHaat
@@ -85,6 +94,15 @@ const Navbar = () => {
             </Link>
             <Link to="/services" className="block py-2 font-medium text-gray-700 hover:text-farmfilo-primary">
               Services
+            </Link>
+            <Link to="/harvesting" className="block py-2 font-medium text-gray-700 hover:text-farmfilo-primary">
+              Harvesting
+            </Link>
+            <Link to="/equipment" className="block py-2 font-medium text-gray-700 hover:text-farmfilo-primary">
+              Equipment Rental
+            </Link>
+            <Link to="/urban-farming" className="block py-2 font-medium text-gray-700 hover:text-farmfilo-primary">
+              Urban Farming
             </Link>
             <Link to="/marketplace" className="block py-2 font-medium text-gray-700 hover:text-farmfilo-primary">
               AgriHaat
