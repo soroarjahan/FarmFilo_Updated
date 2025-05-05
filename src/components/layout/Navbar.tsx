@@ -4,29 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Leaf, ChartPie, Users, Calendar, Phone } from 'lucide-react';
-
-// Create a custom Plant icon component
-const Plant = (props) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <path d="M15 8a5 5 0 0 0-9.7-1c-1.4 1.1-2.2 2.7-2.3 4.3-.1 2.3.9 4.7 2.5 6.5A3 3 0 0 0 8 21a3 3 0 0 0 4 0 3 3 0 0 0 2.5-3" />
-    <path d="M10 17V5c0-1.7 1.3-3 3-3s3 1.3 3 3v12c0 1.7-1.3 3-3 3s-3-1.3-3-3z" />
-    <path d="M13 14h1" />
-    <path d="M13 10h1" />
-    <path d="M13 6h1" />
-    <path d="M13 2h1" />
-  </svg>
-);
+import { Plant } from '@/components/icons/CustomIcons';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);

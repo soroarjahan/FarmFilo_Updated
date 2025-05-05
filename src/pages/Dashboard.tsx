@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,14 +11,13 @@ import {
   Leaf, 
   MapPin, 
   Phone, 
-  Plant, 
-  Rainfall, 
   Sun, 
   Tractor, 
   TrendingDown, 
   TrendingUp, 
   Users 
 } from 'lucide-react';
+import { Plant, Rainfall } from '@/components/icons/CustomIcons';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { ChartContainer, ChartTooltip } from '@/components/ui/chart';
@@ -1023,4 +1021,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-

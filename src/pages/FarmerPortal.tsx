@@ -4,7 +4,8 @@ import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Plant, Calendar, Rainfall, Upload, Image, FileSpreadsheet } from 'lucide-react';
+import { Calendar, Upload, Image, FileSpreadsheet } from 'lucide-react';
+import { Plant, Rainfall } from '@/components/icons/CustomIcons';
 
 const FarmerPortal = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
