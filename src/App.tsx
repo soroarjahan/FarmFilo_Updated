@@ -14,6 +14,10 @@ import Harvesting from "./pages/Harvesting";
 import Equipment from "./pages/Equipment";
 import UrbanFarming from "./pages/UrbanFarming";
 import Dashboard from "./pages/Dashboard";
+import FarmerPortal from "./pages/FarmerPortal";
+import FieldSupervisor from "./pages/FieldSupervisor";
+import CropGuidance from "./pages/CropGuidance";
+import Support from "./pages/Support";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +37,10 @@ const App = () => (
           <Route path="/equipment" element={<Equipment />} />
           <Route path="/urban-farming" element={<UrbanFarming />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/farmer-portal" element={<FarmerPortal />} />
+          <Route path="/field-supervisor" element={<FieldSupervisor />} />
+          <Route path="/crop-guidance" element={<CropGuidance />} />
+          <Route path="/support" element={<Support />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
