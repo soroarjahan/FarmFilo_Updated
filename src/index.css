@@ -79,7 +79,11 @@
   }
   
   h1, h2, h3, h4 {
-    @apply font-playfair;
+    @apply font-montserrat font-bold;
+  }
+
+  button, input, select, textarea {
+    @apply font-montserrat;
   }
 }
 
