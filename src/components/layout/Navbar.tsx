@@ -1,11 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Leaf, ChartPie, Users, Calendar, Phone, MessageSquare, LogIn, UserPlus, LogOut } from 'lucide-react';
+import { Leaf, ChartPie, Users, Calendar, Phone, MessageSquare, LogIn, UserPlus, LogOut, ShoppingCart } from 'lucide-react';
 import { Plant } from '@/components/icons/CustomIcons';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCart } from '@/contexts/CartContext';
+import { toast } from '@/components/ui/sonner';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -31,6 +32,8 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuth();
+  const { cartItems } = useCart();
+  const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,6 +56,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
+    toast.success('You have been logged out successfully');
   };
 
   const getUserInitials = () => {
@@ -203,9 +207,10 @@ const Navbar = () => {
 
               <NavigationMenuItem>
                 <Link to="/marketplace" className={cn(
-                  "px-3 py-2 rounded-md font-montserrat font-medium transition-colors hover:bg-farmfilo-lightGreen/30",
+                  "px-3 py-2 rounded-md font-montserrat font-medium transition-colors hover:bg-farmfilo-lightGreen/30 flex items-center gap-1",
                   isActive("/marketplace") ? "text-farmfilo-primary" : "text-gray-700 hover:text-farmfilo-primary"
                 )}>
+                  <ShoppingCart className="h-4 w-4" />
                   AgriHaat
                 </Link>
               </NavigationMenuItem>
@@ -243,6 +248,17 @@ const Navbar = () => {
           
           {isAuthenticated ? (
             <div className="ml-2 space-x-2 flex items-center">
+              <Link to="/cart" className="relative mr-1">
+                <Button variant="ghost" size="icon" className="relative">
+                  <ShoppingCart className="h-5 w-5" />
+                  {totalItems > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-farmfilo-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {totalItems}
+                    </span>
+                  )}
+                </Button>
+              </Link>
+              
               {user?.role === 'farmer' && (
                 <Button variant="outline" className="font-montserrat border-farmfilo-primary text-farmfilo-primary hover:bg-farmfilo-primary hover:text-white rounded-full px-5" asChild>
                   <Link to="/farmer-portal">
@@ -281,6 +297,10 @@ const Navbar = () => {
                     <ChartPie className="h-4 w-4 mr-2" />
                     Dashboard
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/orders')}>
+                    <ShoppingCart className="h-4 w-4 mr-2" />
+                    My Orders
+                  </DropdownMenuItem>
                   {user?.role === 'farmer' && (
                     <DropdownMenuItem onClick={() => navigate('/farmer-portal')}>
                       <Users className="h-4 w-4 mr-2" />
@@ -298,7 +318,7 @@ const Navbar = () => {
                     Crop Guidance
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout}>
+                  <DropdownMenuItem onClick={handleLogout} className="text-red-500 hover:text-red-700">
                     <LogOut className="h-4 w-4 mr-2" />
                     Logout
                   </DropdownMenuItem>
@@ -408,6 +428,13 @@ const Navbar = () => {
                     <ChartPie className="h-4 w-4" />
                     Dashboard
                   </Link>
+                  <Link to="/orders" className={cn(
+                    "font-montserrat px-3 py-2 rounded-md font-medium flex items-center gap-1 hover:bg-farmfilo-lightGreen/30",
+                    isActive("/orders") ? "text-farmfilo-primary" : "text-gray-700"
+                  )}>
+                    <ShoppingCart className="h-4 w-4" />
+                    My Orders
+                  </Link>
                   {user?.role === 'farmer' || user?.role === 'admin' ? (
                     <Link to="/farmer-portal" className={cn(
                       "font-montserrat px-3 py-2 rounded-md font-medium flex items-center gap-1 hover:bg-farmfilo-lightGreen/30",
@@ -459,7 +486,7 @@ const Navbar = () => {
                     variant="ghost" 
                     size="sm" 
                     onClick={handleLogout}
-                    className="text-farmfilo-primary hover:bg-farmfilo-lightGreen/20 hover:text-farmfilo-primary flex items-center gap-1"
+                    className="text-red-500 hover:bg-red-50 hover:text-red-700 flex items-center gap-1"
                   >
                     <LogOut className="h-4 w-4" />
                     Logout
