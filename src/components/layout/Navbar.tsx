@@ -1,10 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Leaf, ChartPie, Users, Calendar, Phone, MessageSquare, LogIn, UserPlus } from 'lucide-react';
+import { Leaf, ChartPie, Users, Calendar, Phone, MessageSquare, LogIn, UserPlus, LogOut } from 'lucide-react';
 import { Plant } from '@/components/icons/CustomIcons';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -14,11 +15,22 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,6 +49,20 @@ const Navbar = () => {
 
   const isActive = (path: string) => {
     return location.pathname === path;
+  };
+
+  const handleLogout = () => {
+    logout();
+  };
+
+  const getUserInitials = () => {
+    if (!user?.name) return 'U';
+    return user.name
+      .split(' ')
+      .map(name => name[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   return (
@@ -215,16 +241,86 @@ const Navbar = () => {
             Support
           </Link>
           
-          <div className="ml-2 space-x-2">
-            <Button variant="outline" className="font-montserrat border-farmfilo-primary text-farmfilo-primary hover:bg-farmfilo-primary hover:text-white rounded-full px-5 flex items-center gap-1">
-              <LogIn className="h-4 w-4" />
-              Login
-            </Button>
-            <Button className="font-montserrat bg-farmfilo-primary text-white hover:bg-farmfilo-darkGreen rounded-full px-5 flex items-center gap-1">
-              <UserPlus className="h-4 w-4" />
-              Register
-            </Button>
-          </div>
+          {isAuthenticated ? (
+            <div className="ml-2 space-x-2 flex items-center">
+              {user?.role === 'farmer' && (
+                <Button variant="outline" className="font-montserrat border-farmfilo-primary text-farmfilo-primary hover:bg-farmfilo-primary hover:text-white rounded-full px-5" asChild>
+                  <Link to="/farmer-portal">
+                    Farmer Portal
+                  </Link>
+                </Button>
+              )}
+              {user?.role === 'fieldSupervisor' && (
+                <Button variant="outline" className="font-montserrat border-farmfilo-primary text-farmfilo-primary hover:bg-farmfilo-primary hover:text-white rounded-full px-5" asChild>
+                  <Link to="/field-supervisor">
+                    Field Portal
+                  </Link>
+                </Button>
+              )}
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                    <Avatar>
+                      <AvatarImage src={user?.avatar} />
+                      <AvatarFallback className="bg-farmfilo-primary text-white">
+                        {getUserInitials()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col">
+                      <span>{user?.name}</span>
+                      <span className="text-xs text-gray-500">{user?.email}</span>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                    <ChartPie className="h-4 w-4 mr-2" />
+                    Dashboard
+                  </DropdownMenuItem>
+                  {user?.role === 'farmer' && (
+                    <DropdownMenuItem onClick={() => navigate('/farmer-portal')}>
+                      <Users className="h-4 w-4 mr-2" />
+                      Farmer Portal
+                    </DropdownMenuItem>
+                  )}
+                  {user?.role === 'fieldSupervisor' && (
+                    <DropdownMenuItem onClick={() => navigate('/field-supervisor')}>
+                      <Plant className="h-4 w-4 mr-2" />
+                      Supervisor Portal
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem onClick={() => navigate('/crop-guidance')}>
+                    <Calendar className="h-4 w-4 mr-2" />
+                    Crop Guidance
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          ) : (
+            <div className="ml-2 space-x-2">
+              <Button variant="outline" className="font-montserrat border-farmfilo-primary text-farmfilo-primary hover:bg-farmfilo-primary hover:text-white rounded-full px-5 flex items-center gap-1" asChild>
+                <Link to="/login">
+                  <LogIn className="h-4 w-4" />
+                  Login
+                </Link>
+              </Button>
+              <Button className="font-montserrat bg-farmfilo-primary text-white hover:bg-farmfilo-darkGreen rounded-full px-5 flex items-center gap-1" asChild>
+                <Link to="/register">
+                  <UserPlus className="h-4 w-4" />
+                  Register
+                </Link>
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Mobile menu button */}
@@ -301,53 +397,91 @@ const Navbar = () => {
             )}>
               Contact
             </Link>
-            <div className="border-t border-gray-100 pt-2 mt-2 space-y-2">
-              <Link to="/dashboard" className={cn(
-                "font-montserrat px-3 py-2 rounded-md font-medium flex items-center gap-1 hover:bg-farmfilo-lightGreen/30",
-                isActive("/dashboard") ? "text-farmfilo-primary" : "text-gray-700"
-              )}>
-                <ChartPie className="h-4 w-4" />
-                Dashboard
-              </Link>
-              <Link to="/farmer-portal" className={cn(
-                "font-montserrat px-3 py-2 rounded-md font-medium flex items-center gap-1 hover:bg-farmfilo-lightGreen/30",
-                isActive("/farmer-portal") ? "text-farmfilo-primary" : "text-gray-700"
-              )}>
-                <Users className="h-4 w-4" />
-                Farmer Portal
-              </Link>
-              <Link to="/field-supervisor" className={cn(
-                "font-montserrat px-3 py-2 rounded-md font-medium flex items-center gap-1 hover:bg-farmfilo-lightGreen/30",
-                isActive("/field-supervisor") ? "text-farmfilo-primary" : "text-gray-700"
-              )}>
-                <Plant className="h-4 w-4" />
-                Field Supervisor
-              </Link>
-              <Link to="/crop-guidance" className={cn(
-                "font-montserrat px-3 py-2 rounded-md font-medium flex items-center gap-1 hover:bg-farmfilo-lightGreen/30",
-                isActive("/crop-guidance") ? "text-farmfilo-primary" : "text-gray-700"
-              )}>
-                <Calendar className="h-4 w-4" />
-                Crop Guidance
-              </Link>
-              <Link to="/support" className={cn(
-                "font-montserrat px-3 py-2 rounded-md font-medium flex items-center gap-1 hover:bg-farmfilo-lightGreen/30",
-                isActive("/support") ? "text-farmfilo-primary" : "text-gray-700"
-              )}>
-                <Phone className="h-4 w-4" />
-                Support
-              </Link>
-            </div>
-            <div className="flex flex-col space-y-2 pt-3 border-t border-gray-200">
-              <Button variant="outline" className="font-montserrat border-farmfilo-primary text-farmfilo-primary hover:bg-farmfilo-primary hover:text-white rounded-full flex items-center gap-1 justify-center">
-                <LogIn className="h-4 w-4" />
-                Login
-              </Button>
-              <Button className="font-montserrat bg-farmfilo-primary text-white hover:bg-farmfilo-darkGreen rounded-full flex items-center gap-1 justify-center">
-                <UserPlus className="h-4 w-4" />
-                Register
-              </Button>
-            </div>
+            
+            {isAuthenticated ? (
+              <>
+                <div className="border-t border-gray-100 pt-2 mt-2 space-y-2">
+                  <Link to="/dashboard" className={cn(
+                    "font-montserrat px-3 py-2 rounded-md font-medium flex items-center gap-1 hover:bg-farmfilo-lightGreen/30",
+                    isActive("/dashboard") ? "text-farmfilo-primary" : "text-gray-700"
+                  )}>
+                    <ChartPie className="h-4 w-4" />
+                    Dashboard
+                  </Link>
+                  {user?.role === 'farmer' || user?.role === 'admin' ? (
+                    <Link to="/farmer-portal" className={cn(
+                      "font-montserrat px-3 py-2 rounded-md font-medium flex items-center gap-1 hover:bg-farmfilo-lightGreen/30",
+                      isActive("/farmer-portal") ? "text-farmfilo-primary" : "text-gray-700"
+                    )}>
+                      <Users className="h-4 w-4" />
+                      Farmer Portal
+                    </Link>
+                  ) : null}
+                  {user?.role === 'fieldSupervisor' || user?.role === 'admin' ? (
+                    <Link to="/field-supervisor" className={cn(
+                      "font-montserrat px-3 py-2 rounded-md font-medium flex items-center gap-1 hover:bg-farmfilo-lightGreen/30",
+                      isActive("/field-supervisor") ? "text-farmfilo-primary" : "text-gray-700"
+                    )}>
+                      <Plant className="h-4 w-4" />
+                      Field Supervisor
+                    </Link>
+                  ) : null}
+                  <Link to="/crop-guidance" className={cn(
+                    "font-montserrat px-3 py-2 rounded-md font-medium flex items-center gap-1 hover:bg-farmfilo-lightGreen/30",
+                    isActive("/crop-guidance") ? "text-farmfilo-primary" : "text-gray-700"
+                  )}>
+                    <Calendar className="h-4 w-4" />
+                    Crop Guidance
+                  </Link>
+                  <Link to="/support" className={cn(
+                    "font-montserrat px-3 py-2 rounded-md font-medium flex items-center gap-1 hover:bg-farmfilo-lightGreen/30",
+                    isActive("/support") ? "text-farmfilo-primary" : "text-gray-700"
+                  )}>
+                    <Phone className="h-4 w-4" />
+                    Support
+                  </Link>
+                </div>
+                
+                <div className="flex items-center justify-between border-t border-gray-200 pt-3">
+                  <div className="flex items-center gap-2">
+                    <Avatar>
+                      <AvatarImage src={user?.avatar} />
+                      <AvatarFallback className="bg-farmfilo-primary text-white">
+                        {getUserInitials()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-medium text-gray-900">{user?.name}</p>
+                      <p className="text-xs text-gray-500">{user?.email}</p>
+                    </div>
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={handleLogout}
+                    className="text-farmfilo-primary hover:bg-farmfilo-lightGreen/20 hover:text-farmfilo-primary flex items-center gap-1"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Logout
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col space-y-2 pt-3 border-t border-gray-200">
+                <Button variant="outline" className="font-montserrat border-farmfilo-primary text-farmfilo-primary hover:bg-farmfilo-primary hover:text-white rounded-full flex items-center gap-1 justify-center" asChild>
+                  <Link to="/login">
+                    <LogIn className="h-4 w-4" />
+                    Login
+                  </Link>
+                </Button>
+                <Button className="font-montserrat bg-farmfilo-primary text-white hover:bg-farmfilo-darkGreen rounded-full flex items-center gap-1 justify-center" asChild>
+                  <Link to="/register">
+                    <UserPlus className="h-4 w-4" />
+                    Register
+                  </Link>
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       )}

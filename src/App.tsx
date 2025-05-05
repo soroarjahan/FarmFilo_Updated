@@ -4,6 +4,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Services from "./pages/Services";
@@ -30,26 +32,59 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/marketplace" element={<Marketplace />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/harvesting" element={<Harvesting />} />
-          <Route path="/equipment" element={<Equipment />} />
-          <Route path="/urban-farming" element={<UrbanFarming />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/farmer-portal" element={<FarmerPortal />} />
-          <Route path="/field-supervisor" element={<FieldSupervisor />} />
-          <Route path="/crop-guidance" element={<CropGuidance />} />
-          <Route path="/support" element={<Support />} />
-          <Route path="/community" element={<Community />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/marketplace" element={<Marketplace />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/harvesting" element={<Harvesting />} />
+            <Route path="/equipment" element={<Equipment />} />
+            <Route path="/urban-farming" element={<UrbanFarming />} />
+            <Route path="/support" element={<Support />} />
+            <Route path="/community" element={<Community />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            
+            {/* Protected routes */}
+            <Route 
+              path="/dashboard" 
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/farmer-portal" 
+              element={
+                <ProtectedRoute allowedRoles={['farmer', 'admin']}>
+                  <FarmerPortal />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/field-supervisor" 
+              element={
+                <ProtectedRoute allowedRoles={['fieldSupervisor', 'admin']}>
+                  <FieldSupervisor />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/crop-guidance" 
+              element={
+                <ProtectedRoute>
+                  <CropGuidance />
+                </ProtectedRoute>
+              } 
+            />
+            
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
