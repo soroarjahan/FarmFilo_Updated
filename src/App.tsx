@@ -18,6 +18,9 @@ import FarmerPortal from "./pages/FarmerPortal";
 import FieldSupervisor from "./pages/FieldSupervisor";
 import CropGuidance from "./pages/CropGuidance";
 import Support from "./pages/Support";
+import Community from "./pages/Community";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +44,9 @@ const App = () => (
           <Route path="/field-supervisor" element={<FieldSupervisor />} />
           <Route path="/crop-guidance" element={<CropGuidance />} />
           <Route path="/support" element={<Support />} />
+          <Route path="/community" element={<Community />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

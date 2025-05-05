@@ -1,6 +1,8 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { ChevronRight } from 'lucide-react';
 
 const HeroSection: React.FC = () => {
   return (
@@ -15,16 +17,25 @@ const HeroSection: React.FC = () => {
               Transforming conventional farming into organic farming, ensuring chemical-free, nutritious food while improving farmers' livelihoods through technology.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button className="btn-primary w-full sm:w-auto" size="lg">Get Started</Button>
-              <Button variant="outline" className="btn-outline w-full sm:w-auto" size="lg">Learn More</Button>
+              <Link to="/register">
+                <Button className="bg-farmfilo-primary hover:bg-farmfilo-darkGreen text-white w-full sm:w-auto flex items-center gap-2" size="lg">
+                  Get Started
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </Link>
+              <Link to="/community">
+                <Button variant="outline" className="border-farmfilo-primary text-farmfilo-primary hover:bg-farmfilo-primary hover:text-white w-full sm:w-auto" size="lg">
+                  Join Community
+                </Button>
+              </Link>
             </div>
           </div>
           <div className="w-full md:w-1/2 relative animate-fade-in">
             <div className="relative z-10">
               <img 
-                src="https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=800&q=80" 
+                src="https://images.unsplash.com/photo-1500151549154-50b24c9ebc3d?auto=format&fit=crop&w=800&q=80" 
                 alt="Organic Farming" 
-                className="rounded-lg shadow-xl w-full"
+                className="rounded-lg shadow-xl w-full h-[400px] object-cover"
               />
             </div>
             <div className="absolute -bottom-4 -right-4 w-64 h-64 bg-farmfilo-accent/20 rounded-full -z-10"></div>
