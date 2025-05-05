@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Leaf, ChartPie, Users, Calendar, Phone, MessageSquare, LogIn, UserPlus, LogOut, ShoppingCart } from 'lucide-react';
+import { Leaf, ChartPie, Users, Calendar, Phone, MessageSquare, LogIn, UserPlus, LogOut, ShoppingCart, ChevronDown } from 'lucide-react';
 import { Plant } from '@/components/icons/CustomIcons';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
@@ -25,6 +26,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -326,19 +332,30 @@ const Navbar = () => {
               </DropdownMenu>
             </div>
           ) : (
-            <div className="ml-2 space-x-2">
-              <Button variant="outline" className="font-montserrat border-farmfilo-primary text-farmfilo-primary hover:bg-farmfilo-primary hover:text-white rounded-full px-5 flex items-center gap-1" asChild>
-                <Link to="/login">
-                  <LogIn className="h-4 w-4" />
-                  Login
-                </Link>
-              </Button>
-              <Button className="font-montserrat bg-farmfilo-primary text-white hover:bg-farmfilo-darkGreen rounded-full px-5 flex items-center gap-1" asChild>
-                <Link to="/register">
-                  <UserPlus className="h-4 w-4" />
-                  Register
-                </Link>
-              </Button>
+            <div className="ml-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button className="font-montserrat bg-farmfilo-primary text-white hover:bg-farmfilo-darkGreen rounded-full px-5 flex items-center gap-1">
+                    <UserPlus className="h-4 w-4" />
+                    Register
+                    <ChevronDown className="h-4 w-4 ml-1" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-white p-2 border-farmfilo-primary/20">
+                  <DropdownMenuItem asChild>
+                    <Link to="/register" className="flex items-center gap-2 rounded-md hover:bg-farmfilo-lightGreen/30 text-gray-700 hover:text-farmfilo-primary">
+                      <UserPlus className="h-4 w-4" />
+                      Register
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/login" className="flex items-center gap-2 rounded-md hover:bg-farmfilo-lightGreen/30 text-gray-700 hover:text-farmfilo-primary">
+                      <LogIn className="h-4 w-4" />
+                      Login
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           )}
         </div>
