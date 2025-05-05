@@ -29,11 +29,11 @@ const HarvestingSection: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12">
           <div>
             <h2 className="text-3xl md:text-4xl font-bold text-farmfilo-darkGreen mb-4">Harvesting Services</h2>
-            <p className="text-lg text-gray-600 max-w-2xl">
+            <p className="text-lg text-gray-600 max-w-2xl font-montserrat">
               Professional harvesting solutions to maximize yield and reduce post-harvest losses for organic farmers across Bangladesh.
             </p>
           </div>
-          <Button className="mt-6 md:mt-0 bg-farmfilo-primary text-white hover:bg-farmfilo-darkGreen" asChild>
+          <Button className="mt-6 md:mt-0 bg-farmfilo-primary text-white hover:bg-farmfilo-darkGreen font-montserrat" asChild>
             <Link to="/harvesting">Explore Services</Link>
           </Button>
         </div>
@@ -48,8 +48,8 @@ const HarvestingSection: React.FC = () => {
                 {service.icon}
               </div>
               <h3 className="text-xl font-semibold mb-2 text-farmfilo-darkGreen">{service.title}</h3>
-              <p className="text-gray-600 mb-4">{service.description}</p>
-              <Button variant="outline" className="w-full border-farmfilo-primary text-farmfilo-primary hover:bg-farmfilo-primary hover:text-white">
+              <p className="text-gray-600 mb-4 font-montserrat">{service.description}</p>
+              <Button variant="outline" className="w-full border-farmfilo-primary text-farmfilo-primary hover:bg-farmfilo-primary hover:text-white font-montserrat">
                 Learn More
               </Button>
             </div>

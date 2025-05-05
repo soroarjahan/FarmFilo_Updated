@@ -32,37 +32,37 @@ const Navbar = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
-          <Link to="/" className="font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
+          <Link to="/" className="font-montserrat font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
             Home
           </Link>
-          <Link to="/about" className="font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
+          <Link to="/about" className="font-montserrat font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
             About
           </Link>
-          <Link to="/services" className="font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
+          <Link to="/services" className="font-montserrat font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
             Services
           </Link>
-          <Link to="/harvesting" className="font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
+          <Link to="/harvesting" className="font-montserrat font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
             Harvesting
           </Link>
-          <Link to="/equipment" className="font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
+          <Link to="/equipment" className="font-montserrat font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
             Equipment Rental
           </Link>
-          <Link to="/urban-farming" className="font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
+          <Link to="/urban-farming" className="font-montserrat font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
             Urban Farming
           </Link>
-          <Link to="/marketplace" className="font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
+          <Link to="/marketplace" className="font-montserrat font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
             AgriHaat
           </Link>
-          <Link to="/contact" className="font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
+          <Link to="/contact" className="font-montserrat font-medium text-gray-700 hover:text-farmfilo-primary transition-colors">
             Contact
           </Link>
         </nav>
 
         <div className="hidden md:flex items-center space-x-4">
-          <Button variant="outline" className="border-farmfilo-primary text-farmfilo-primary hover:bg-farmfilo-primary hover:text-white">
+          <Button variant="outline" className="font-montserrat border-farmfilo-primary text-farmfilo-primary hover:bg-farmfilo-primary hover:text-white">
             Login
           </Button>
-          <Button className="bg-farmfilo-primary text-white hover:bg-farmfilo-darkGreen">
+          <Button className="font-montserrat bg-farmfilo-primary text-white hover:bg-farmfilo-darkGreen">
             Register
           </Button>
         </div>
@@ -86,35 +86,35 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white shadow-lg">
           <div className="container px-4 py-4 flex flex-col space-y-4">
-            <Link to="/" className="block py-2 font-medium text-farmfilo-primary">
+            <Link to="/" className="font-montserrat block py-2 font-medium text-farmfilo-primary">
               Home
             </Link>
-            <Link to="/about" className="block py-2 font-medium text-gray-700 hover:text-farmfilo-primary">
+            <Link to="/about" className="font-montserrat block py-2 font-medium text-gray-700 hover:text-farmfilo-primary">
               About
             </Link>
-            <Link to="/services" className="block py-2 font-medium text-gray-700 hover:text-farmfilo-primary">
+            <Link to="/services" className="font-montserrat block py-2 font-medium text-gray-700 hover:text-farmfilo-primary">
               Services
             </Link>
-            <Link to="/harvesting" className="block py-2 font-medium text-gray-700 hover:text-farmfilo-primary">
+            <Link to="/harvesting" className="font-montserrat block py-2 font-medium text-gray-700 hover:text-farmfilo-primary">
               Harvesting
             </Link>
-            <Link to="/equipment" className="block py-2 font-medium text-gray-700 hover:text-farmfilo-primary">
+            <Link to="/equipment" className="font-montserrat block py-2 font-medium text-gray-700 hover:text-farmfilo-primary">
               Equipment Rental
             </Link>
-            <Link to="/urban-farming" className="block py-2 font-medium text-gray-700 hover:text-farmfilo-primary">
+            <Link to="/urban-farming" className="font-montserrat block py-2 font-medium text-gray-700 hover:text-farmfilo-primary">
               Urban Farming
             </Link>
-            <Link to="/marketplace" className="block py-2 font-medium text-gray-700 hover:text-farmfilo-primary">
+            <Link to="/marketplace" className="font-montserrat block py-2 font-medium text-gray-700 hover:text-farmfilo-primary">
               AgriHaat
             </Link>
-            <Link to="/contact" className="block py-2 font-medium text-gray-700 hover:text-farmfilo-primary">
+            <Link to="/contact" className="font-montserrat block py-2 font-medium text-gray-700 hover:text-farmfilo-primary">
               Contact
             </Link>
             <div className="flex flex-col space-y-2 pt-2 border-t border-gray-200">
-              <Button variant="outline" className="border-farmfilo-primary text-farmfilo-primary hover:bg-farmfilo-primary hover:text-white">
+              <Button variant="outline" className="font-montserrat border-farmfilo-primary text-farmfilo-primary hover:bg-farmfilo-primary hover:text-white">
                 Login
               </Button>
-              <Button className="bg-farmfilo-primary text-white hover:bg-farmfilo-darkGreen">
+              <Button className="font-montserrat bg-farmfilo-primary text-white hover:bg-farmfilo-darkGreen">
                 Register
               </Button>
             </div>

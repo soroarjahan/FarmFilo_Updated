@@ -108,6 +108,7 @@ export default {
 				'grow': 'grow 0.5s ease-out forwards'
 			},
 			fontFamily: {
+				'montserrat': ['Montserrat', 'sans-serif'],
 				'poppins': ['Poppins', 'sans-serif'],
 				'playfair': ['Playfair Display', 'serif']
 			}
