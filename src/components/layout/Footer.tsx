@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Leaf, Mail, MapPin, Phone } from 'lucide-react';
+import { Leaf, Mail, MapPin, Phone, Facebook, Linkedin, Instagram, Youtube } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -18,22 +18,17 @@ const Footer = () => {
             </div>
             <p className="mb-4 text-gray-600">Transforming conventional farming into organic farming, ensuring chemical-free, nutritious food while reducing pollution and restoring biodiversity.</p>
             <div className="flex space-x-4">
-              <a href="#" className="bg-farmfilo-primary text-white p-2 rounded-full hover:bg-farmfilo-darkGreen transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-                </svg>
+              <a href="https://www.facebook.com/farmfilobd" target="_blank" rel="noopener noreferrer" className="bg-farmfilo-primary text-white p-2 rounded-full hover:bg-farmfilo-darkGreen transition-colors">
+                <Facebook className="h-5 w-5" />
               </a>
-              <a href="#" className="bg-farmfilo-primary text-white p-2 rounded-full hover:bg-farmfilo-darkGreen transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-                  <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
-                </svg>
+              <a href="https://www.linkedin.com/company/farmfilobd" target="_blank" rel="noopener noreferrer" className="bg-farmfilo-primary text-white p-2 rounded-full hover:bg-farmfilo-darkGreen transition-colors">
+                <Linkedin className="h-5 w-5" />
               </a>
-              <a href="#" className="bg-farmfilo-primary text-white p-2 rounded-full hover:bg-farmfilo-darkGreen transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-                </svg>
+              <a href="https://www.instagram.com/farm_filo" target="_blank" rel="noopener noreferrer" className="bg-farmfilo-primary text-white p-2 rounded-full hover:bg-farmfilo-darkGreen transition-colors">
+                <Instagram className="h-5 w-5" />
+              </a>
+              <a href="https://www.youtube.com/@farmfilo" target="_blank" rel="noopener noreferrer" className="bg-farmfilo-primary text-white p-2 rounded-full hover:bg-farmfilo-darkGreen transition-colors">
+                <Youtube className="h-5 w-5" />
               </a>
             </div>
           </div>
@@ -63,7 +58,7 @@ const Footer = () => {
               <li>
                 <Link to="/marketplace" className="text-gray-600 hover:text-farmfilo-primary transition-colors flex items-center gap-2">
                   <span className="w-1.5 h-1.5 bg-farmfilo-accent rounded-full inline-block"></span>
-                  AgriHaat Marketplace
+                  Farmfilo Basket
                 </Link>
               </li>
               <li>
@@ -118,15 +113,15 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-start">
                 <MapPin className="h-5 w-5 mr-3 text-farmfilo-primary shrink-0 mt-1" />
-                <span className="text-gray-600">123 Green Street, Dhaka, Bangladesh</span>
+                <span className="text-gray-600">RCRC Street, Court para, Kushtia Sadar, Kushtia-7000</span>
               </li>
               <li className="flex items-start">
                 <Mail className="h-5 w-5 mr-3 text-farmfilo-primary shrink-0 mt-1" />
-                <span className="text-gray-600">contact@farmfilo.com</span>
+                <span className="text-gray-600">info@farmfilo.com</span>
               </li>
               <li className="flex items-start">
                 <Phone className="h-5 w-5 mr-3 text-farmfilo-primary shrink-0 mt-1" />
-                <span className="text-gray-600">+880 12345 67890</span>
+                <span className="text-gray-600">+8801822-917633</span>
               </li>
             </ul>
           </div>

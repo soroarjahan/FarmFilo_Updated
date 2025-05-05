@@ -211,7 +211,7 @@ const Navbar = () => {
                   isActive("/marketplace") ? "text-farmfilo-primary" : "text-gray-700 hover:text-farmfilo-primary"
                 )}>
                   <ShoppingCart className="h-4 w-4" />
-                  AgriHaat
+                  Farmfilo Basket
                 </Link>
               </NavigationMenuItem>
 
@@ -402,7 +402,7 @@ const Navbar = () => {
               "font-montserrat px-3 py-2 rounded-md font-medium hover:bg-farmfilo-lightGreen/30",
               isActive("/marketplace") ? "text-farmfilo-primary" : "text-gray-700"
             )}>
-              AgriHaat
+              Farmfilo Basket
             </Link>
             <Link to="/community" className={cn(
               "font-montserrat px-3 py-2 rounded-md font-medium hover:bg-farmfilo-lightGreen/30 flex items-center gap-1",
