@@ -119,7 +119,7 @@ const FarmerProductUpload = () => {
         description: formData.description,
         ecoFriendly: formData.ecoFriendly,
         farmer: user?.name || 'Unknown Farmer',
-        farm: user?.farmName || 'Local Farm',
+        farm: 'Local Farm', // Fixed value instead of trying to access user.farmName
         inStock: true,
         // In a real app, this would be the URL returned from the image upload service
         image: imagePreview || 'https://images.unsplash.com/photo-1518160140141-23ab08b6be02?auto=format&fit=crop&w=400&q=80',
