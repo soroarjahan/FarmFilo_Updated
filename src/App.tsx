@@ -28,6 +28,7 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import OrderTracking from "./pages/OrderTracking";
 import Orders from "./pages/Orders";
+import FarmerProductUpload from "./pages/FarmerProductUpload";
 
 const queryClient = new QueryClient();
 
@@ -76,6 +77,16 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Orders />
+                  </ProtectedRoute>
+                } 
+              />
+              
+              {/* Farmer Product Upload route */}
+              <Route 
+                path="/farmer-product-upload" 
+                element={
+                  <ProtectedRoute allowedRoles={['farmer', 'admin']}>
+                    <FarmerProductUpload />
                   </ProtectedRoute>
                 } 
               />

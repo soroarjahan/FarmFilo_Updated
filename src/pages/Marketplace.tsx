@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
@@ -6,95 +5,138 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ShoppingCart, Leaf } from 'lucide-react';
+import { useCart } from '@/contexts/CartContext';
+import { Link } from 'react-router-dom';
 
 const products = [
   {
-    id: 1,
+    id: "1",
     name: "Organic Rice",
     image: "https://images.unsplash.com/photo-1615729947596-a598e5de0ab3?auto=format&fit=crop&w=400&q=80",
-    price: "৳65/kg",
+    price: 65,
     farmer: "Rahman Ali",
     location: "Mymensingh",
     category: "Grains",
     rating: 4.8,
-    availability: "In Stock"
+    availability: "In Stock",
+    unit: "kg",
+    ecoFriendly: true,
+    farm: "Green Paddy Farms",
+    inStock: true,
+    description: "Premium quality organic rice grown with traditional farming methods."
   },
   {
-    id: 2,
+    id: "2",
     name: "Fresh Vegetables Bundle",
     image: "https://images.unsplash.com/photo-1518160140141-23ab08b6be02?auto=format&fit=crop&w=400&q=80",
-    price: "৳45/kg",
+    price: 45,
     farmer: "Amina Begum",
     location: "Rajshahi",
     category: "Vegetables",
     rating: 4.7,
-    availability: "In Stock"
+    availability: "In Stock",
+    unit: "kg",
+    ecoFriendly: true,
+    farm: "Natural Harvest",
+    inStock: true,
+    description: "Freshly harvested organic vegetables bundle."
   },
   {
     id: 3,
     name: "Organic Fruits Mix",
     image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?auto=format&fit=crop&w=400&q=80",
-    price: "৳120/kg",
+    price: 120,
     farmer: "Karim Hossain",
     location: "Khulna",
     category: "Fruits",
     rating: 4.9,
-    availability: "In Stock"
+    availability: "In Stock",
+    unit: "kg",
+    ecoFriendly: true,
+    farm: "Fruitful Farms",
+    inStock: true,
+    description: "A mix of organic fruits for a balanced diet."
   },
   {
     id: 4,
     name: "Organic Honey",
     image: "https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=400&q=80",
-    price: "৳450/bottle",
+    price: 450,
     farmer: "Fazlur Rahman",
     location: "Sylhet",
     category: "Other",
     rating: 5.0,
-    availability: "In Stock"
+    availability: "In Stock",
+    unit: "bottle",
+    ecoFriendly: true,
+    farm: "Honeyland",
+    inStock: true,
+    description: "High-quality organic honey for a healthier lifestyle."
   },
   {
     id: 5,
     name: "Fresh Eggs",
     image: "https://images.unsplash.com/photo-1506976785307-8732e854ad03?auto=format&fit=crop&w=400&q=80",
-    price: "৳120/dozen",
+    price: 120,
     farmer: "Nasima Akther",
     location: "Dhaka",
     category: "Dairy & Eggs",
     rating: 4.6,
-    availability: "Limited Stock"
+    availability: "Limited Stock",
+    unit: "dozen",
+    ecoFriendly: true,
+    farm: "Egg Farm",
+    inStock: true,
+    description: "Organic eggs for a healthier diet."
   },
   {
     id: 6,
     name: "Organic Potatoes",
     image: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=400&q=80",
-    price: "৳35/kg",
+    price: 35,
     farmer: "Abdul Majid",
     location: "Rangpur",
     category: "Vegetables",
     rating: 4.5,
-    availability: "In Stock"
+    availability: "In Stock",
+    unit: "kg",
+    ecoFriendly: true,
+    farm: "Green Valley Farms",
+    inStock: true,
+    description: "Organic potatoes for a healthier diet."
   },
   {
     id: 7,
     name: "Organic Lentils",
     image: "https://images.unsplash.com/photo-1515543904379-3d757abe59e5?auto=format&fit=crop&w=400&q=80",
-    price: "৳95/kg",
+    price: 95,
     farmer: "Hosneara Begum",
     location: "Barishal",
     category: "Grains",
     rating: 4.7,
-    availability: "In Stock"
+    availability: "In Stock",
+    unit: "kg",
+    ecoFriendly: true,
+    farm: "Grainland",
+    inStock: true,
+    description: "Organic lentils for a healthier diet."
   },
   {
     id: 8,
     name: "Fresh Milk",
     image: "https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=400&q=80",
-    price: "৳80/liter",
+    price: 80,
     farmer: "Mofizur Rahman",
     location: "Tangail",
     category: "Dairy & Eggs",
     rating: 4.8,
-    availability: "In Stock"
+    availability: "In Stock",
+    unit: "liter",
+    ecoFriendly: true,
+    farm: "Dairy Farm",
+    inStock: true,
+    description: "Organic milk for a healthier diet."
   }
 ];
 
@@ -124,6 +166,7 @@ const Marketplace = () => {
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedLocation, setSelectedLocation] = useState("All Locations");
   const [organicOnly, setOrganicOnly] = useState(false);
+  const { addToCart } = useCart();
 
   // Filter products based on search term, category, location, and organic filter
   const filteredProducts = products.filter(product => {
@@ -131,17 +174,21 @@ const Marketplace = () => {
                           product.farmer.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "All Categories" || product.category === selectedCategory;
     const matchesLocation = selectedLocation === "All Locations" || product.location === selectedLocation;
-    const matchesOrganic = !organicOnly || product.name.toLowerCase().includes("organic");
+    const matchesOrganic = !organicOnly || product.ecoFriendly;
     
     return matchesSearch && matchesCategory && matchesLocation && matchesOrganic;
   });
+
+  const handleAddToCart = (product: any) => {
+    addToCart(product, 1);
+  };
 
   return (
     <Layout>
       <div className="pt-24 pb-16 leaf-pattern">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-farmfilo-darkGreen mb-4">AgriHaat Marketplace</h1>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-farmfilo-darkGreen mb-4">Farmfilo Basket Marketplace</h1>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               Direct farm-to-table marketplace connecting organic farmers with consumers for fair trade and fresh produce.
             </p>
@@ -212,11 +259,16 @@ const Marketplace = () => {
                     alt={product.name} 
                     className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
                   />
+                  {product.ecoFriendly && (
+                    <span className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full flex items-center">
+                      <Leaf className="h-3 w-3 mr-1" /> Eco-friendly
+                    </span>
+                  )}
                 </div>
                 <CardContent className="p-4">
                   <div className="flex justify-between items-center mb-2">
                     <h3 className="font-semibold text-farmfilo-darkGreen">{product.name}</h3>
-                    <span className="font-bold text-farmfilo-primary">{product.price}</span>
+                    <span className="font-bold text-farmfilo-primary">৳{product.price}/{product.unit}</span>
                   </div>
                   <div className="text-sm text-gray-500 mb-3">
                     <p>Farmer: {product.farmer}</p>
@@ -233,7 +285,12 @@ const Marketplace = () => {
                       {product.availability}
                     </span>
                   </div>
-                  <Button variant="outline" className="w-full border-farmfilo-primary text-farmfilo-primary hover:bg-farmfilo-primary hover:text-white">
+                  <Button 
+                    variant="outline" 
+                    className="w-full border-farmfilo-primary text-farmfilo-primary hover:bg-farmfilo-primary hover:text-white flex items-center justify-center gap-2"
+                    onClick={() => handleAddToCart(product)}
+                  >
+                    <ShoppingCart className="h-4 w-4" />
                     Add to Cart
                   </Button>
                 </CardContent>
@@ -264,11 +321,11 @@ const Marketplace = () => {
               <div className="mb-6 md:mb-0">
                 <h3 className="text-2xl font-bold text-farmfilo-darkGreen mb-2">Become a Partner Farmer</h3>
                 <p className="text-gray-700 max-w-xl">
-                  Join our growing network of organic farmers. Get training, resources, and direct access to consumers through our AgriHaat marketplace.
+                  Join our growing network of organic farmers. Get training, resources, and direct access to consumers through our Farmfilo Basket marketplace.
                 </p>
               </div>
-              <Button className="bg-farmfilo-primary text-white hover:bg-farmfilo-darkGreen" size="lg">
-                Register as Farmer
+              <Button className="bg-farmfilo-primary text-white hover:bg-farmfilo-darkGreen" size="lg" asChild>
+                <Link to="/register">Register as Farmer</Link>
               </Button>
             </div>
           </div>

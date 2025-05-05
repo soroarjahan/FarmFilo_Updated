@@ -60,7 +60,7 @@ const MarketplaceSection: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-farmfilo-darkGreen mb-4">AgriHaat Marketplace</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-farmfilo-darkGreen mb-4">Farmfilo Basket Marketplace</h2>
             <p className="text-lg text-gray-600 max-w-2xl">
               Direct farm-to-table marketplace connecting organic farmers with consumers for fair trade and fresh produce.
             </p>
