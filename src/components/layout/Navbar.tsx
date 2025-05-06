@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Leaf, ChartPie, Users, Calendar, Phone, MessageSquare, LogIn, UserPlus, LogOut, ShoppingCart, ChevronDown } from 'lucide-react';
+import { ChartPie, Users, Calendar, Phone, MessageSquare, LogIn, UserPlus, LogOut, ShoppingCart, ChevronDown } from 'lucide-react';
 import { Plant } from '@/components/icons/CustomIcons';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
@@ -81,11 +81,12 @@ const Navbar = () => {
       isScrolled ? "bg-white shadow-md py-2" : "bg-white/95 py-3 border-b border-gray-100"
     )}>
       <div className="container mx-auto px-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <Leaf className="h-6 w-6 text-farmfilo-primary" />
-          <span className="font-montserrat font-bold text-2xl text-farmfilo-primary">
-            Farm<span className="text-farmfilo-accent">Filo</span>
-          </span>
+        <Link to="/" className="flex items-center">
+          <img 
+            src="https://i.postimg.cc/qqpsSXn7/Farmfilo-Logo.png" 
+            alt="FarmFilo Logo" 
+            className="h-10"
+          />
         </Link>
 
         {/* Desktop Navigation */}
@@ -379,6 +380,13 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="lg:hidden bg-white shadow-lg">
           <div className="container px-4 py-4 flex flex-col space-y-2">
+            <Link to="/" className="flex items-center mb-4">
+              <img 
+                src="https://i.postimg.cc/qqpsSXn7/Farmfilo-Logo.png" 
+                alt="FarmFilo Logo" 
+                className="h-8"
+              />
+            </Link>
             <Link to="/" className={cn(
               "font-montserrat px-3 py-2 rounded-md font-medium hover:bg-farmfilo-lightGreen/30",
               isActive("/") ? "text-farmfilo-primary" : "text-gray-700"

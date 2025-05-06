@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Leaf, Mail, MapPin, Phone, Facebook, Linkedin, Instagram, Youtube } from 'lucide-react';
+import { Mail, MapPin, Phone, Facebook, Linkedin, Instagram, Youtube } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -10,11 +10,12 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Column 1 */}
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <Leaf className="h-6 w-6 text-farmfilo-primary" />
-              <span className="font-montserrat font-bold text-2xl text-farmfilo-primary">
-                Farm<span className="text-farmfilo-accent">Filo</span>
-              </span>
+            <div className="flex items-center mb-4">
+              <img 
+                src="https://i.postimg.cc/qqpsSXn7/Farmfilo-Logo.png" 
+                alt="FarmFilo Logo" 
+                className="h-10"
+              />
             </div>
             <p className="mb-4 text-gray-600">Transforming conventional farming into organic farming, ensuring chemical-free, nutritious food while reducing pollution and restoring biodiversity.</p>
             <div className="flex space-x-4">
