@@ -17,4 +17,22 @@ export interface Product {
     end: string;
   };
   auctionEnds?: string;
+  cropData?: {
+    plantingDate?: string;
+    expectedHarvestDate?: string;
+    actualYield?: number;
+    expectedYield?: number;
+    fieldLocation?: string;
+  };
+}
+
+export interface ImageAnalysisResult {
+  id: string;
+  fieldName: string;
+  date: string;
+  imageUrl: string;
+  healthyPercentage: number;
+  stressPercentage: number;
+  diseasePercentage: number;
+  notes?: string;
 }

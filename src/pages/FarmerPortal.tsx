@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -27,7 +28,8 @@ import {
   Calendar,
   ArrowUpRight,
   Filter,
-  MoreVertical
+  MoreVertical,
+  ImageAnalysis
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -41,6 +43,12 @@ import { Progress } from '@/components/ui/progress';
 import { format } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/contexts/AuthContext';
+
+// Import our new components
+import MyCrops from '@/components/farmer/MyCrops';
+import Activities from '@/components/farmer/Activities';
+import YieldData from '@/components/farmer/YieldData';
+import ImageAnalysisComponent from '@/components/farmer/ImageAnalysis';
 
 const FarmerPortal = () => {
   const navigate = useNavigate();
@@ -85,7 +93,7 @@ const FarmerPortal = () => {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold text-farmfilo-darkGreen mb-2">Farmer Portal</h1>
-            <p className="text-gray-600">Manage your products and track your sales</p>
+            <p className="text-gray-600">Manage your crops and track your farming activities</p>
           </div>
           <Button 
             onClick={handleNewProduct}
@@ -141,8 +149,12 @@ const FarmerPortal = () => {
         </div>
         
         <Tabs defaultValue="products" className="space-y-4">
-          <TabsList>
+          <TabsList className="flex-wrap">
             <TabsTrigger value="products">My Products</TabsTrigger>
+            <TabsTrigger value="crops">My Crops</TabsTrigger>
+            <TabsTrigger value="yield">Yield Data</TabsTrigger>
+            <TabsTrigger value="activities">Activities</TabsTrigger>
+            <TabsTrigger value="image-analysis">Image Analysis</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
           </TabsList>
@@ -303,6 +315,22 @@ const FarmerPortal = () => {
                 </Card>
               </div>
             )}
+          </TabsContent>
+          
+          <TabsContent value="crops">
+            <MyCrops />
+          </TabsContent>
+          
+          <TabsContent value="yield">
+            <YieldData />
+          </TabsContent>
+          
+          <TabsContent value="activities">
+            <Activities />
+          </TabsContent>
+          
+          <TabsContent value="image-analysis">
+            <ImageAnalysisComponent />
           </TabsContent>
           
           <TabsContent value="orders">
