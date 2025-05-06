@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -29,7 +28,7 @@ import {
   ArrowUpRight,
   Filter,
   MoreVertical,
-  ImageAnalysis
+  Image
 } from 'lucide-react';
 import {
   DropdownMenu,

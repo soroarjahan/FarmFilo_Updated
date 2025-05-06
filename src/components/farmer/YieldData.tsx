@@ -127,17 +127,16 @@ const YieldData = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <ChartTooltip
-                    content={props => (
+                  <Tooltip
+                    content={(props) => (
                       <ChartTooltipContent
                         {...props}
                         indicator="dot"
-                        formatValue={(value) => `${value} kg`}
                       />
                     )}
                   />
-                  <ChartLegend
-                    content={props => (
+                  <Legend
+                    content={(props) => (
                       <ChartLegendContent {...props} />
                     )}
                   />

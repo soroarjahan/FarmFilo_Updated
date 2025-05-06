@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { ImageAnalysis as ImageIcon, Upload, Eye } from 'lucide-react';
+import { Image as ImageIcon, Upload, Eye } from 'lucide-react';
 import { format } from 'date-fns';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ImageAnalysisResult } from '@/types/product';
