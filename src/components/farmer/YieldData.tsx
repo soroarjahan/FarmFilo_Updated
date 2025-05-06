@@ -28,6 +28,7 @@ import {
   ResponsiveContainer,
   LineChart,
   Line,
+  TooltipProps,
 } from 'recharts';
 
 const mockYieldData = [
@@ -127,18 +128,17 @@ const YieldData = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip
-                    content={(props) => (
-                      <ChartTooltipContent
-                        {...props}
-                        indicator="dot"
-                      />
-                    )}
+                  <Tooltip 
+                    content={(props) => {
+                      return props.active && props.payload && props.payload.length ? (
+                        <ChartTooltipContent {...props} indicator="dot" />
+                      ) : null;
+                    }}
                   />
-                  <Legend
-                    content={(props) => (
-                      <ChartLegendContent {...props} />
-                    )}
+                  <Legend 
+                    content={(props) => {
+                      return <ChartLegendContent {...props} />;
+                    }}
                   />
                   <Line
                     type="monotone"
