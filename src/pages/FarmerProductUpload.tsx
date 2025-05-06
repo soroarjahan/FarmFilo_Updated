@@ -1,329 +1,483 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { LoadingSpinner } from '@/components/auth/LoadingSpinner';
-import { useAuth } from '@/contexts/AuthContext';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { toast } from '@/components/ui/sonner';
-import { useNavigate } from 'react-router-dom';
-import { Package, Upload } from 'lucide-react';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Upload, Info, Calendar, DollarSign, Tag, Clock, Camera } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Switch } from '@/components/ui/switch';
 
-// Categories for the product
-const categories = [
-  "Vegetables",
-  "Fruits",
-  "Grains",
-  "Dairy & Eggs",
-  "Other"
-];
+const productSchema = z.object({
+  name: z.string().min(3, "Product name must be at least 3 characters"),
+  category: z.string().min(1, "Please select a category"),
+  description: z.string().min(10, "Description must be at least 10 characters"),
+  price: z.coerce.number().positive("Price must be positive"),
+  unit: z.string().min(1, "Please select a unit"),
+  quantity: z.coerce.number().int().positive("Quantity must be a positive integer"),
+  organic: z.boolean(),
+  sellingMethod: z.enum(["fixed", "auction"]),
+  deliveryStartDate: z.string().min(1, "Please select a start date"),
+  deliveryEndDate: z.string().min(1, "Please select an end date"),
+  auctionEndDate: z.string().optional(),
+});
 
-// Units for the product pricing
-const units = [
-  "kg",
-  "piece",
-  "dozen",
-  "bundle",
-  "liter",
-  "bottle"
-];
+type ProductFormValues = z.infer<typeof productSchema>;
 
 const FarmerProductUpload = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [isUploading, setIsUploading] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
   
-  const [formData, setFormData] = useState({
-    name: '',
-    category: '',
-    price: '',
-    unit: 'kg',
-    description: '',
-    ecoFriendly: false,
-    image: null as File | null
+  const form = useForm<ProductFormValues>({
+    resolver: zodResolver(productSchema),
+    defaultValues: {
+      name: "",
+      category: "",
+      description: "",
+      price: 0,
+      unit: "kg",
+      quantity: 1,
+      organic: true,
+      sellingMethod: "fixed",
+      deliveryStartDate: "",
+      deliveryEndDate: "",
+      auctionEndDate: ""
+    }
   });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSelectChange = (name: string, value: string) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleCheckboxChange = (checked: boolean) => {
-    setFormData(prev => ({ ...prev, ecoFriendly: checked }));
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setFormData(prev => ({ ...prev, image: file }));
+  
+  const watchSellingMethod = form.watch("sellingMethod");
+  
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      setImageFile(file);
       
-      // Create a preview URL for the selected image
+      // Preview image
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
+      reader.onload = () => {
+        setUploadedImage(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
-
-  const validateForm = () => {
-    if (!formData.name) {
-      toast.error("Please enter a product name");
-      return false;
-    }
-    if (!formData.category) {
-      toast.error("Please select a category");
-      return false;
-    }
-    if (!formData.price || isNaN(Number(formData.price)) || Number(formData.price) <= 0) {
-      toast.error("Please enter a valid price");
-      return false;
-    }
-    if (!formData.image) {
+  
+  const onSubmit = (data: ProductFormValues) => {
+    if (!uploadedImage) {
       toast.error("Please upload a product image");
-      return false;
+      return;
     }
-    return true;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
     
-    if (!validateForm()) return;
+    setLoading(true);
     
-    setIsUploading(true);
-    
-    try {
-      // In a real app, this would be an API call to upload the product
-      // Here we're simulating the upload with a timeout
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Assuming the product is successfully uploaded
-      // For demonstration purposes, we're creating a product object
-      const newProduct = {
-        id: `prod-${Date.now()}`,
-        name: formData.name,
-        category: formData.category,
-        price: parseFloat(formData.price),
-        unit: formData.unit,
-        description: formData.description,
-        ecoFriendly: formData.ecoFriendly,
-        farmer: user?.name || 'Unknown Farmer',
-        farm: 'Local Farm', // Fixed value instead of trying to access user.farmName
-        inStock: true,
-        // In a real app, this would be the URL returned from the image upload service
-        image: imagePreview || 'https://images.unsplash.com/photo-1518160140141-23ab08b6be02?auto=format&fit=crop&w=400&q=80',
-      };
-      
-      // In a real app, we would store this in a database
-      // For now, we'll store it in localStorage for demo purposes
-      const existingProducts = JSON.parse(localStorage.getItem('farmfilo_products') || '[]');
-      localStorage.setItem('farmfilo_products', JSON.stringify([...existingProducts, newProduct]));
-      
+    // Simulate API call
+    setTimeout(() => {
+      setLoading(false);
       toast.success("Product uploaded successfully!");
-      
-      // Reset form after successful upload
-      setFormData({
-        name: '',
-        category: '',
-        price: '',
-        unit: 'kg',
-        description: '',
-        ecoFriendly: false,
-        image: null
-      });
-      setImagePreview(null);
-      
-    } catch (error) {
-      console.error('Error uploading product:', error);
-      toast.error("Failed to upload product. Please try again.");
-    } finally {
-      setIsUploading(false);
-    }
+      navigate('/farmer-portal');
+    }, 1500);
   };
 
   return (
     <Layout>
       <div className="container mx-auto px-4 py-20">
-        <div className="max-w-3xl mx-auto">
-          <div className="mb-10">
-            <h1 className="text-3xl font-bold text-farmfilo-darkGreen mb-2">Upload Your Products</h1>
-            <p className="text-gray-600">
-              Add your farm products to the Farmfilo Basket marketplace and connect directly with customers.
-            </p>
+        <div className="max-w-4xl mx-auto">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-farmfilo-darkGreen mb-2">Upload New Product</h1>
+            <p className="text-gray-600">Add your organic products to the FarmFilo marketplace</p>
           </div>
           
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Package className="h-5 w-5" /> Product Details
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Product Name</Label>
-                    <Input 
-                      id="name" 
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      placeholder="Enter product name" 
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="category">Category</Label>
-                    <Select value={formData.category} onValueChange={(value) => handleSelectChange('category', value)}>
-                      <SelectTrigger id="category">
-                        <SelectValue placeholder="Select a category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.map(category => (
-                          <SelectItem key={category} value={category}>{category}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="price">Price (৳)</Label>
-                    <Input 
-                      id="price" 
-                      name="price"
-                      value={formData.price}
-                      onChange={handleInputChange}
-                      placeholder="Enter price" 
-                      type="number"
-                      min="0"
-                      step="0.01"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="unit">Unit</Label>
-                    <Select value={formData.unit} onValueChange={(value) => handleSelectChange('unit', value)}>
-                      <SelectTrigger id="unit">
-                        <SelectValue placeholder="Select a unit" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {units.map(unit => (
-                          <SelectItem key={unit} value={unit}>{unit}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="description">Product Description</Label>
-                  <Textarea 
-                    id="description" 
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    placeholder="Describe your product" 
-                    className="min-h-[120px]"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="image">Product Image</Label>
-                  <div className="flex flex-col items-center space-y-4 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                    {imagePreview ? (
-                      <div className="w-full">
-                        <img 
-                          src={imagePreview} 
-                          alt="Product preview" 
-                          className="h-40 mx-auto object-contain mb-4"
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 space-y-8">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Info className="h-5 w-5" />
+                        Product Information
+                      </CardTitle>
+                      <CardDescription>
+                        Basic details about your product
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Product Name</FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g., Organic Rice" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="category"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Category</FormLabel>
+                              <Select 
+                                onValueChange={field.onChange} 
+                                defaultValue={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select category" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="Vegetables">Vegetables</SelectItem>
+                                  <SelectItem value="Fruits">Fruits</SelectItem>
+                                  <SelectItem value="Grains">Grains</SelectItem>
+                                  <SelectItem value="Dairy & Honey">Dairy & Honey</SelectItem>
+                                  <SelectItem value="Oils & Spices">Oils & Spices</SelectItem>
+                                  <SelectItem value="Fish & Meat">Fish & Meat</SelectItem>
+                                  <SelectItem value="Sweeteners">Sweeteners</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
                         />
-                        <Button 
-                          type="button" 
-                          variant="outline"
-                          onClick={() => {
-                            setImagePreview(null);
-                            setFormData(prev => ({ ...prev, image: null }));
-                          }}
-                        >
-                          Remove Image
-                        </Button>
+                        
+                        <FormField
+                          control={form.control}
+                          name="organic"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-end space-x-3 space-y-0 mt-8">
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                              <div className="space-y-1 leading-none">
+                                <FormLabel>
+                                  Certified Organic
+                                </FormLabel>
+                              </div>
+                            </FormItem>
+                          )}
+                        />
                       </div>
-                    ) : (
-                      <>
-                        <Upload className="h-12 w-12 text-gray-400" />
-                        <div>
-                          <p className="font-medium text-gray-800">Click to upload or drag and drop</p>
-                          <p className="text-sm text-gray-500">PNG, JPG, JPEG (max. 5MB)</p>
-                        </div>
-                        <Input 
-                          id="image" 
-                          type="file" 
-                          className="hidden" 
-                          accept="image/png, image/jpeg, image/jpg"
-                          onChange={handleImageChange}
+                      
+                      <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Product Description</FormLabel>
+                            <FormControl>
+                              <Textarea 
+                                placeholder="Describe your product in detail" 
+                                className="resize-none min-h-[120px]" 
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              Include information about quality, growing methods, and special features.
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Tag className="h-5 w-5" />
+                        Pricing & Inventory
+                      </CardTitle>
+                      <CardDescription>
+                        Set your pricing and available quantity
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="price"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Price (৳)</FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                  <Input type="number" min={0} className="pl-10" {...field} />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
                         />
-                        <Label 
-                          htmlFor="image" 
-                          className="bg-farmfilo-primary hover:bg-farmfilo-primary/90 text-white py-2 px-6 rounded-md cursor-pointer"
-                        >
-                          Select File
-                        </Label>
-                      </>
-                    )}
+                        
+                        <FormField
+                          control={form.control}
+                          name="unit"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Unit</FormLabel>
+                              <Select 
+                                onValueChange={field.onChange} 
+                                defaultValue={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Unit" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="kg">Kilogram (kg)</SelectItem>
+                                  <SelectItem value="g">Gram (g)</SelectItem>
+                                  <SelectItem value="piece">Piece</SelectItem>
+                                  <SelectItem value="dozen">Dozen</SelectItem>
+                                  <SelectItem value="liter">Liter</SelectItem>
+                                  <SelectItem value="jar">Jar</SelectItem>
+                                  <SelectItem value="packet">Packet</SelectItem>
+                                  <SelectItem value="bundle">Bundle</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="quantity"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Available Quantity</FormLabel>
+                              <FormControl>
+                                <Input type="number" min={1} {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      
+                      <FormField
+                        control={form.control}
+                        name="sellingMethod"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Selling Method</FormLabel>
+                            <FormDescription>
+                              Choose how you want to sell your product
+                            </FormDescription>
+                            <FormControl>
+                              <Tabs 
+                                onValueChange={field.onChange} 
+                                defaultValue={field.value}
+                                className="w-full"
+                              >
+                                <TabsList className="grid w-full grid-cols-2">
+                                  <TabsTrigger value="fixed">Fixed Price</TabsTrigger>
+                                  <TabsTrigger value="auction">Auction/Bidding</TabsTrigger>
+                                </TabsList>
+                                <TabsContent value="fixed" className="pt-4">
+                                  <p className="text-sm text-gray-600">
+                                    Sell your product at a fixed price. Buyers can purchase at the price you set.
+                                  </p>
+                                </TabsContent>
+                                <TabsContent value="auction" className="pt-4">
+                                  <p className="text-sm text-gray-600 mb-4">
+                                    Let buyers bid on your product. The highest bidder at the end of the auction wins.
+                                  </p>
+                                  <FormField
+                                    control={form.control}
+                                    name="auctionEndDate"
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel>Auction End Date</FormLabel>
+                                        <FormControl>
+                                          <Input type="date" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                </TabsContent>
+                              </Tabs>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Calendar className="h-5 w-5" />
+                        Delivery Window
+                      </CardTitle>
+                      <CardDescription>
+                        When can you deliver this product?
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="deliveryStartDate"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Available From</FormLabel>
+                              <FormControl>
+                                <Input type="date" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="deliveryEndDate"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Available Until</FormLabel>
+                              <FormControl>
+                                <Input type="date" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                <div>
+                  <div className="sticky top-24 space-y-6">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <Camera className="h-5 w-5" />
+                          Product Image
+                        </CardTitle>
+                        <CardDescription>
+                          Upload a high-quality image
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-4">
+                          <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center">
+                            {uploadedImage ? (
+                              <div className="relative">
+                                <img 
+                                  src={uploadedImage} 
+                                  alt="Product preview" 
+                                  className="mx-auto h-40 w-full object-cover rounded-md"
+                                />
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  onClick={() => {
+                                    setUploadedImage(null);
+                                    setImageFile(null);
+                                  }}
+                                  className="absolute top-2 right-2 h-6 w-6 p-1 bg-white/80 hover:bg-white rounded-full"
+                                >
+                                  ×
+                                </Button>
+                              </div>
+                            ) : (
+                              <div className="py-6">
+                                <div className="flex flex-col items-center">
+                                  <Upload className="h-10 w-10 text-gray-400 mb-2" />
+                                  <p className="text-sm text-gray-500 mb-2">
+                                    Click to upload or drag and drop
+                                  </p>
+                                  <p className="text-xs text-gray-400">
+                                    PNG, JPG up to 5MB
+                                  </p>
+                                </div>
+                              </div>
+                            )}
+                            
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className={`absolute inset-0 w-full h-full opacity-0 cursor-pointer ${uploadedImage ? 'hidden' : ''}`}
+                              onChange={handleImageUpload}
+                            />
+                          </div>
+                          
+                          <div className="text-xs text-gray-500">
+                            <p>
+                              <span className="font-medium">Tip:</span> Use clear, well-lit photos that showcase your product quality.
+                            </p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-farmfilo-primary hover:bg-farmfilo-darkGreen"
+                      disabled={loading}
+                    >
+                      {loading ? "Uploading..." : "Add Product to Marketplace"}
+                    </Button>
                   </div>
                 </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="ecoFriendly" 
-                    checked={formData.ecoFriendly}
-                    onCheckedChange={handleCheckboxChange}
-                  />
-                  <Label htmlFor="ecoFriendly">
-                    This product is eco-friendly (grown without harmful chemicals or pesticides)
-                  </Label>
-                </div>
-                
-                <div className="border-t border-gray-200 pt-6 flex justify-end">
-                  <Button 
-                    type="submit" 
-                    className="bg-farmfilo-primary hover:bg-farmfilo-darkGreen text-white"
-                    disabled={isUploading}
-                  >
-                    {isUploading ? 'Uploading...' : 'Upload Product'}
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-          
-          <div className="mt-8 bg-farmfilo-lightGreen rounded-lg p-6">
-            <h3 className="text-xl font-bold text-farmfilo-darkGreen mb-2">Tips for Effective Product Listings</h3>
-            <ul className="space-y-2 list-disc list-inside text-gray-700">
-              <li>Use high-quality images with good lighting</li>
-              <li>Write clear, detailed descriptions</li>
-              <li>Be accurate with pricing and availability</li>
-              <li>Highlight eco-friendly and organic attributes</li>
-              <li>Update your inventory regularly</li>
-            </ul>
-          </div>
+              </div>
+            </form>
+          </Form>
         </div>
       </div>
-      
-      {isUploading && <LoadingSpinner />}
     </Layout>
   );
 };

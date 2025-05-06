@@ -1,15 +1,13 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import HeroSection from '@/components/home/HeroSection';
 import ServicesSection from '@/components/home/ServicesSection';
-import ImpactSection from '@/components/home/ImpactSection';
-import MarketplaceSection from '@/components/home/MarketplaceSection';
+import FeaturedProducts from '@/components/marketplace/FeaturedProducts';
 import TestimonialsSection from '@/components/home/TestimonialsSection';
+import ImpactSection from '@/components/home/ImpactSection';
 import CTASection from '@/components/home/CTASection';
-import HarvestingSection from '@/components/home/HarvestingSection';
-import EquipmentRentalSection from '@/components/home/EquipmentRentalSection';
-import UrbanFarmingSection from '@/components/home/UrbanFarmingSection';
 import BlogSection from '@/components/home/BlogSection';
 
 const Index = () => {
@@ -17,14 +15,11 @@ const Index = () => {
     <Layout>
       <HeroSection />
       <ServicesSection />
-      <HarvestingSection />
-      <EquipmentRentalSection />
-      <UrbanFarmingSection />
+      <FeaturedProducts />
       <ImpactSection />
-      <MarketplaceSection />
-      <BlogSection />
       <TestimonialsSection />
       <CTASection />
+      <BlogSection />
     </Layout>
   );
 };

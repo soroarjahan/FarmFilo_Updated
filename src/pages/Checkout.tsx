@@ -1,405 +1,367 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Textarea } from '@/components/ui/textarea';
-import { useNavigate } from 'react-router-dom';
-import { Leaf, CreditCard, Truck } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { CheckCircle2, CreditCard, Landmark, Truck, User } from 'lucide-react';
 
-const deliveryOptions = [
-  {
-    id: "standard",
-    name: "Standard Delivery",
-    price: 50,
-    time: "3-5 business days",
-    ecoFriendly: false,
-  },
-  {
-    id: "express",
-    name: "Express Delivery",
-    price: 120,
-    time: "1-2 business days",
-    ecoFriendly: false,
-  },
-  {
-    id: "eco",
-    name: "Eco-Friendly Delivery",
-    price: 80,
-    time: "2-4 business days",
-    ecoFriendly: true,
-    description: "Delivered using electric vehicles. Lower carbon footprint.",
-  },
-];
+const formSchema = z.object({
+  fullName: z.string().min(3, "Full name must be at least 3 characters"),
+  email: z.string().email("Invalid email address"),
+  phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  address: z.string().min(5, "Address must be at least 5 characters"),
+  city: z.string().min(2, "City must be at least 2 characters"),
+  postalCode: z.string().min(4, "Postal code must be at least 4 characters"),
+  paymentMethod: z.enum(["cash", "card", "bank"]),
+  notes: z.string().optional()
+});
 
-const paymentMethods = [
-  { id: "card", name: "Credit/Debit Card" },
-  { id: "bkash", name: "bKash" },
-  { id: "nagad", name: "Nagad" },
-  { id: "cod", name: "Cash on Delivery" },
-];
+type FormValues = z.infer<typeof formSchema>;
 
 const Checkout = () => {
-  const { cartItems, getCartTotal, clearCart } = useCart();
+  const { cartItems, subtotal, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [deliveryOption, setDeliveryOption] = useState("eco");
-  const [paymentMethod, setPaymentMethod] = useState("card");
-  const [formData, setFormData] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
-    phone: "",
-    address: "",
-    city: "",
-    zipcode: "",
-    notes: "",
-    saveInfo: true,
+  const [loading, setLoading] = useState(false);
+  
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      fullName: user?.name || "",
+      email: user?.email || "",
+      phone: "",
+      address: "",
+      city: "",
+      postalCode: "",
+      paymentMethod: "cash",
+      notes: ""
+    }
   });
-
+  
+  const deliveryFee = 60;
+  const total = subtotal + deliveryFee;
+  
+  const onSubmit = (data: FormValues) => {
+    setLoading(true);
+    
+    // Simulate order processing
+    setTimeout(() => {
+      setLoading(false);
+      clearCart();
+      
+      // Navigate to success page
+      navigate('/order-confirmation', { 
+        state: { 
+          order: {
+            id: `ORD-${Date.now()}`,
+            items: cartItems,
+            customer: data,
+            total
+          }
+        }
+      });
+      
+      toast.success("Your order has been placed successfully!");
+    }, 1500);
+  };
+  
   if (cartItems.length === 0) {
-    navigate('/cart');
+    navigate('/marketplace');
     return null;
   }
 
-  const selectedDelivery = deliveryOptions.find(option => option.id === deliveryOption) || deliveryOptions[0];
-  const subtotal = getCartTotal();
-  const deliveryFee = selectedDelivery.price;
-  const total = subtotal + deliveryFee;
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleCheckboxChange = (checked: boolean) => {
-    setFormData(prev => ({ ...prev, saveInfo: checked }));
-  };
-
-  const validateForm = () => {
-    const requiredFields = ['name', 'email', 'phone', 'address', 'city', 'zipcode'];
-    for (const field of requiredFields) {
-      if (!formData[field as keyof typeof formData]) {
-        toast.error(`Please enter your ${field}`);
-        return false;
-      }
-    }
-    return true;
-  };
-
-  const generateOrderId = () => {
-    return 'ORD-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substr(2, 5).toUpperCase();
-  };
-
-  const handlePlaceOrder = async () => {
-    if (!validateForm()) return;
-    
-    setIsProcessing(true);
-    
-    try {
-      // Simulate API call with a delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const orderId = generateOrderId();
-      
-      // Mock blockchain hash for transparency
-      const blockchainHash = '0x' + Array(40).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('');
-      
-      // Create an order object that would typically be sent to the backend
-      const orderData = {
-        id: orderId,
-        userId: user?.id,
-        items: cartItems.map(item => ({
-          productId: item.product.id,
-          name: item.product.name,
-          price: item.product.price,
-          quantity: item.quantity,
-          farmerId: item.product.farmer,
-        })),
-        deliveryOption,
-        paymentMethod,
-        shipping: {
-          name: formData.name,
-          address: formData.address,
-          city: formData.city,
-          zipcode: formData.zipcode,
-          phone: formData.phone,
-        },
-        subtotal,
-        deliveryFee,
-        total,
-        status: "processing",
-        blockchainHash,
-        ecoFriendly: selectedDelivery.ecoFriendly,
-        createdAt: new Date().toISOString(),
-      };
-      
-      // In a real app, we would store this in a database
-      // For now, we'll just store it in localStorage for demo purposes
-      const existingOrders = JSON.parse(localStorage.getItem('farmfilo_orders') || '[]');
-      localStorage.setItem('farmfilo_orders', JSON.stringify([...existingOrders, orderData]));
-      
-      // Clear the cart
-      clearCart();
-      
-      toast.success('Order placed successfully!');
-      navigate(`/order-tracking/${orderId}`);
-      
-    } catch (error) {
-      console.error('Error placing order:', error);
-      toast.error('Failed to place order. Please try again.');
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-  
   return (
     <Layout>
       <div className="container mx-auto px-4 py-20">
-        <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl font-bold text-farmfilo-darkGreen mb-8">Checkout</h1>
-          
-          <div className="flex flex-col lg:flex-row gap-8">
-            <div className="flex-grow space-y-6">
-              {/* Shipping Information */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Shipping Information</CardTitle>
-                  <CardDescription>Enter your delivery details</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Full Name</Label>
-                      <Input 
-                        id="name" 
-                        name="name" 
-                        value={formData.name} 
-                        onChange={handleInputChange} 
-                        placeholder="Enter your full name"
+        <div className="text-center mb-10">
+          <h1 className="text-3xl md:text-4xl font-bold text-farmfilo-darkGreen mb-4">Checkout</h1>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">Almost there! Fill in your delivery and payment details to complete your order.</p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <User className="h-5 w-5" />
+                      Contact Information
+                    </CardTitle>
+                    <CardDescription>
+                      Enter your contact details for order updates
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="fullName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Full Name</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Your full name" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Your email" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email Address</Label>
-                      <Input 
-                        id="email" 
-                        name="email" 
-                        type="email" 
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        placeholder="you@example.com" 
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Phone Number</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Your phone number" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Truck className="h-5 w-5" />
+                      Delivery Address
+                    </CardTitle>
+                    <CardDescription>
+                      Enter the address where you want your order delivered
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="address"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Street Address</FormLabel>
+                          <FormControl>
+                            <Input placeholder="House number, street name, area" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="city"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>City</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Your city" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="postalCode"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Postal Code</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Your postal code" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
                     </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input 
-                      id="phone" 
-                      name="phone" 
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      placeholder="Enter your phone number" 
+                    
+                    <FormField
+                      control={form.control}
+                      name="notes"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Delivery Notes (Optional)</FormLabel>
+                          <FormControl>
+                            <Textarea 
+                              placeholder="Any special instructions for delivery?" 
+                              className="resize-none"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="address">Address</Label>
-                    <Input 
-                      id="address" 
-                      name="address" 
-                      value={formData.address}
-                      onChange={handleInputChange}
-                      placeholder="Enter your street address" 
-                    />
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="city">City</Label>
-                      <Input 
-                        id="city" 
-                        name="city" 
-                        value={formData.city}
-                        onChange={handleInputChange}
-                        placeholder="Enter your city" 
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="zipcode">Zip Code</Label>
-                      <Input 
-                        id="zipcode" 
-                        name="zipcode" 
-                        value={formData.zipcode}
-                        onChange={handleInputChange}
-                        placeholder="Enter your zip code" 
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="notes">Order Notes (Optional)</Label>
-                    <Textarea 
-                      id="notes" 
-                      name="notes" 
-                      value={formData.notes}
-                      onChange={handleInputChange}
-                      placeholder="Special instructions for delivery" 
-                      className="min-h-[100px]"
-                    />
-                  </div>
-                  
-                  <div className="flex items-center space-x-2 pt-2">
-                    <Checkbox 
-                      id="saveInfo" 
-                      checked={formData.saveInfo} 
-                      onCheckedChange={handleCheckboxChange} 
-                    />
-                    <Label htmlFor="saveInfo">Save this information for next time</Label>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              {/* Delivery Options */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Delivery Method</CardTitle>
-                  <CardDescription>Select your preferred delivery option</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <RadioGroup 
-                    value={deliveryOption} 
-                    onValueChange={setDeliveryOption}
-                    className="space-y-3"
-                  >
-                    {deliveryOptions.map((option) => (
-                      <div 
-                        key={option.id}
-                        className={`flex items-center space-x-3 border rounded-lg p-4 cursor-pointer transition-colors ${
-                          deliveryOption === option.id ? 'border-farmfilo-primary bg-farmfilo-lightGreen/20' : 'border-gray-200'
-                        }`}
-                      >
-                        <RadioGroupItem value={option.id} id={`delivery-${option.id}`} />
-                        <div className="flex-grow">
-                          <Label 
-                            htmlFor={`delivery-${option.id}`}
-                            className="font-medium cursor-pointer flex items-center"
-                          >
-                            {option.name}
-                            {option.ecoFriendly && (
-                              <span className="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs text-green-700">
-                                <Leaf className="h-3 w-3 mr-1" /> Eco-friendly
-                              </span>
-                            )}
-                          </Label>
-                          <p className="text-sm text-gray-500">Estimated delivery in {option.time}</p>
-                          {option.description && (
-                            <p className="text-xs text-gray-500 mt-1">{option.description}</p>
-                          )}
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <CreditCard className="h-5 w-5" />
+                      Payment Method
+                    </CardTitle>
+                    <CardDescription>
+                      Select your preferred payment method
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Tabs defaultValue="cash" onValueChange={(value: string) => form.setValue("paymentMethod", value as "cash" | "card" | "bank")}>
+                      <TabsList className="grid w-full grid-cols-3">
+                        <TabsTrigger value="cash">Cash on Delivery</TabsTrigger>
+                        <TabsTrigger value="card">Credit/Debit Card</TabsTrigger>
+                        <TabsTrigger value="bank">Bank Transfer</TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="cash" className="p-4 border rounded-md mt-4">
+                        <p className="text-sm text-gray-600">Pay with cash when your order is delivered. Our delivery agent will provide a receipt.</p>
+                      </TabsContent>
+                      <TabsContent value="card" className="p-4 border rounded-md mt-4">
+                        <p className="text-sm text-gray-600">Pay securely using your credit or debit card. We accept Visa, Mastercard, and American Express.</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                          <Input placeholder="Card Number" />
+                          <Input placeholder="Name on Card" />
+                          <Input placeholder="Expiry (MM/YY)" />
+                          <Input placeholder="CVV" type="password" maxLength={3} />
                         </div>
-                        <span className="font-medium">৳{option.price}</span>
-                      </div>
-                    ))}
-                  </RadioGroup>
-                </CardContent>
-              </Card>
-              
-              {/* Payment Method */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Payment Method</CardTitle>
-                  <CardDescription>Select your preferred payment option</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <RadioGroup 
-                    value={paymentMethod} 
-                    onValueChange={setPaymentMethod}
-                    className="space-y-3"
+                      </TabsContent>
+                      <TabsContent value="bank" className="p-4 border rounded-md mt-4">
+                        <p className="text-sm text-gray-600">Transfer the payment to our bank account. Use your order ID as the payment reference.</p>
+                        <div className="mt-4 bg-gray-50 p-3 rounded">
+                          <p className="font-medium">Bank Account Details:</p>
+                          <p className="text-sm">Bank: Bangladesh Bank</p>
+                          <p className="text-sm">Account Name: FarmFilo Ltd.</p>
+                          <p className="text-sm">Account Number: 1234-5678-9012</p>
+                        </div>
+                      </TabsContent>
+                    </Tabs>
+                  </CardContent>
+                </Card>
+                
+                <div className="hidden lg:block">
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-farmfilo-primary hover:bg-farmfilo-darkGreen"
+                    disabled={loading}
                   >
-                    {paymentMethods.map((method) => (
-                      <div 
-                        key={method.id}
-                        className={`flex items-center space-x-3 border rounded-lg p-4 cursor-pointer transition-colors ${
-                          paymentMethod === method.id ? 'border-farmfilo-primary bg-farmfilo-lightGreen/20' : 'border-gray-200'
-                        }`}
-                      >
-                        <RadioGroupItem value={method.id} id={`payment-${method.id}`} />
-                        <Label 
-                          htmlFor={`payment-${method.id}`}
-                          className="font-medium cursor-pointer flex-grow"
-                        >
-                          {method.name}
-                        </Label>
-                        {method.id === 'card' && <CreditCard className="h-5 w-5 text-gray-500" />}
-                      </div>
-                    ))}
-                  </RadioGroup>
-                </CardContent>
-              </Card>
-            </div>
-            
-            <div className="w-full lg:w-80 space-y-6">
-              {/* Order Summary */}
+                    {loading ? "Processing..." : "Place Order"}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </div>
+          
+          <div>
+            <div className="space-y-6">
               <Card>
                 <CardHeader>
                   <CardTitle>Order Summary</CardTitle>
-                  <CardDescription>Review your order</CardDescription>
+                  <CardDescription>
+                    {cartItems.length} {cartItems.length === 1 ? 'item' : 'items'} in your cart
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    {cartItems.map((item) => (
-                      <div key={item.product.id} className="flex justify-between">
-                        <div>
-                          <p className="font-medium text-sm">{item.product.name}</p>
-                          <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
-                        </div>
-                        <span className="text-sm font-medium">৳{item.product.price * item.quantity}</span>
+                  {cartItems.map(item => (
+                    <div key={item.product.id} className="flex justify-between">
+                      <div>
+                        <span className="font-medium">{item.quantity} × </span>
+                        <span>{item.product.name}</span>
                       </div>
-                    ))}
-                  </div>
+                      <span className="font-medium">৳{item.product.price * item.quantity}</span>
+                    </div>
+                  ))}
                   
-                  <div className="border-t border-gray-200 pt-4 space-y-2">
+                  <div className="border-t pt-4 space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Subtotal</span>
                       <span>৳{subtotal}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Delivery</span>
+                      <span className="text-gray-600">Delivery Fee</span>
                       <span>৳{deliveryFee}</span>
                     </div>
-                    <div className="flex justify-between font-medium pt-2 border-t border-gray-200">
+                    <div className="flex justify-between font-bold text-base pt-2">
                       <span>Total</span>
                       <span className="text-farmfilo-primary">৳{total}</span>
                     </div>
                   </div>
-                  
-                  <div className="pt-2 border-t border-gray-200">
-                    <div className="flex items-start space-x-2">
-                      <Truck className="h-5 w-5 text-farmfilo-primary mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium">Blockchain-Verified Order Tracking</p>
-                        <p className="text-xs text-gray-500">Every step of your order is recorded on a secure blockchain for complete transparency</p>
-                      </div>
-                    </div>
-                  </div>
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="lg:hidden">
                   <Button 
+                    onClick={form.handleSubmit(onSubmit)} 
                     className="w-full bg-farmfilo-primary hover:bg-farmfilo-darkGreen"
-                    disabled={isProcessing}
-                    onClick={handlePlaceOrder}
+                    disabled={loading}
                   >
-                    {isProcessing ? 'Processing...' : 'Place Order'}
+                    {loading ? "Processing..." : "Place Order"}
                   </Button>
                 </CardFooter>
               </Card>
+              
+              <div className="bg-farmfilo-lightGreen p-4 rounded-lg">
+                <h3 className="font-medium text-farmfilo-darkGreen mb-2 flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-farmfilo-primary" />
+                  Satisfaction Guarantee
+                </h3>
+                <p className="text-sm text-gray-700">
+                  If you're not 100% satisfied with the quality of our products, we'll replace them or give you a full refund.
+                </p>
+              </div>
+              
+              <div className="text-xs text-gray-500">
+                <p>By placing your order, you agree to FarmFilo's Terms of Service and Privacy Policy.</p>
+              </div>
             </div>
           </div>
         </div>

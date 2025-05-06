@@ -1,379 +1,383 @@
 
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/contexts/AuthContext';
-import { ShoppingCart, ExternalLink, ArrowRight, Clock, CheckCircle2, Truck, Package, Leaf } from 'lucide-react';
+import { ShoppingCart, Package, Clock, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
-interface OrderType {
+// Mock order data for demonstration
+interface OrderItem {
   id: string;
-  userId: string;
-  items: Array<{
-    productId: string;
-    name: string;
-    quantity: number;
-    price: number;
-  }>;
-  shipping: {
-    name: string;
-    address: string;
-    city: string;
-    zipcode: string;
-    phone: string;
-  };
-  subtotal: number;
-  deliveryFee: number;
-  total: number;
-  status: 'processing' | 'shipped' | 'in_transit' | 'delivered';
-  blockchainHash: string;
-  ecoFriendly: boolean;
-  createdAt: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
 }
 
-const Orders = () => {
-  const [orders, setOrders] = useState<OrderType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const { user } = useAuth();
+interface Order {
+  id: string;
+  date: string;
+  status: 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  total: number;
+  items: OrderItem[];
+}
 
-  useEffect(() => {
-    const fetchOrders = () => {
-      setIsLoading(true);
-      try {
-        // In a real app, this would be an API call
-        const storedOrders = JSON.parse(localStorage.getItem('farmfilo_orders') || '[]');
-        
-        // Filter orders for the current user
-        const userOrders = storedOrders.filter((order: OrderType) => order.userId === user?.id);
-        
-        // If no orders exist yet, create some dummy orders for demo purposes
-        if (userOrders.length === 0 && user) {
-          const demoOrders = generateDemoOrders(user.id);
-          localStorage.setItem('farmfilo_orders', JSON.stringify([...storedOrders, ...demoOrders]));
-          setOrders(demoOrders);
-        } else {
-          setOrders(userOrders);
-        }
-      } catch (error) {
-        console.error('Error fetching orders:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchOrders();
-  }, [user]);
-
-  // Generate demo orders for new users
-  const generateDemoOrders = (userId: string): OrderType[] => {
-    const now = new Date();
-    return [
-      {
-        id: `ORD-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
-        userId,
-        items: [
-          { productId: '1', name: 'Organic Rice', quantity: 2, price: 65 },
-          { productId: '3', name: 'Organic Fruits', quantity: 1, price: 120 },
-        ],
-        shipping: {
-          name: user?.name || 'User',
-          address: '123 Green Street',
-          city: 'Dhaka',
-          zipcode: '1207',
-          phone: '+880 1712345678'
-        },
-        subtotal: 250,
-        deliveryFee: 80,
-        total: 330,
-        status: 'delivered',
-        blockchainHash: '0x' + Array(40).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join(''),
-        ecoFriendly: true,
-        createdAt: new Date(now.getTime() - 15 * 24 * 60 * 60 * 1000).toISOString() // 15 days ago
+const mockOrders: Order[] = [
+  {
+    id: 'ORD-1234567',
+    date: '2025-05-02',
+    status: 'delivered',
+    total: 350,
+    items: [
+      { 
+        id: '1', 
+        name: 'Organic Rice', 
+        price: 65, 
+        quantity: 3,
+        image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?q=80&w=2070&auto=format&fit=crop'
       },
-      {
-        id: `ORD-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
-        userId,
-        items: [
-          { productId: '2', name: 'Fresh Vegetables', quantity: 3, price: 45 },
-        ],
-        shipping: {
-          name: user?.name || 'User',
-          address: '456 Farm Avenue',
-          city: 'Dhaka',
-          zipcode: '1212',
-          phone: '+880 1712345678'
-        },
-        subtotal: 135,
-        deliveryFee: 50,
-        total: 185,
-        status: 'in_transit',
-        blockchainHash: '0x' + Array(40).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join(''),
-        ecoFriendly: false,
-        createdAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString() // 2 days ago
+      { 
+        id: '8', 
+        name: 'Organic Turmeric Powder', 
+        price: 95, 
+        quantity: 1,
+        image: 'https://images.unsplash.com/photo-1615485500704-8e990f9900f7?q=80&w=2067&auto=format&fit=crop'
+      },
+      { 
+        id: '9', 
+        name: 'Free-Range Eggs', 
+        price: 60, 
+        quantity: 1,
+        image: 'https://images.unsplash.com/photo-1557759786-6758d40e765f?q=80&w=2070&auto=format&fit=crop'
       }
-    ];
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'processing':
-        return <Clock className="h-4 w-4 text-amber-500" />;
-      case 'shipped':
-        return <Package className="h-4 w-4 text-blue-500" />;
-      case 'in_transit':
-        return <Truck className="h-4 w-4 text-indigo-500" />;
-      case 'delivered':
-        return <CheckCircle2 className="h-4 w-4 text-green-500" />;
-      default:
-        return <Clock className="h-4 w-4" />;
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'processing':
-        return 'Processing';
-      case 'shipped':
-        return 'Shipped';
-      case 'in_transit':
-        return 'In Transit';
-      case 'delivered':
-        return 'Delivered';
-      default:
-        return status;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'processing':
-        return 'bg-amber-100 text-amber-700';
-      case 'shipped':
-        return 'bg-blue-100 text-blue-700';
-      case 'in_transit':
-        return 'bg-indigo-100 text-indigo-700';
-      case 'delivered':
-        return 'bg-green-100 text-green-700';
-      default:
-        return 'bg-gray-100 text-gray-700';
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <Layout>
-        <div className="container mx-auto px-4 py-20">
-          <div className="animate-pulse space-y-6 max-w-4xl mx-auto">
-            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-            <div className="h-8 bg-gray-200 rounded w-1/2"></div>
-            <div className="h-64 bg-gray-200 rounded"></div>
-          </div>
-        </div>
-      </Layout>
-    );
+    ]
+  },
+  {
+    id: 'ORD-7654321',
+    date: '2025-04-28',
+    status: 'shipped',
+    total: 210,
+    items: [
+      { 
+        id: '2', 
+        name: 'Mixed Vegetables Basket', 
+        price: 45, 
+        quantity: 2,
+        image: 'https://images.unsplash.com/photo-1518843875459-f738682238a6?q=80&w=2942&auto=format&fit=crop'
+      },
+      { 
+        id: '4', 
+        name: 'Honey', 
+        price: 120, 
+        quantity: 1,
+        image: 'https://images.unsplash.com/photo-1587049633312-d628ae10a8c9?q=80&w=2080&auto=format&fit=crop'
+      }
+    ]
+  },
+  {
+    id: 'ORD-9876543',
+    date: '2025-04-15',
+    status: 'processing',
+    total: 130,
+    items: [
+      { 
+        id: '3', 
+        name: 'Organic Fruits Bundle', 
+        price: 130, 
+        quantity: 1,
+        image: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?q=80&w=2070&auto=format&fit=crop'
+      }
+    ]
   }
+];
+
+const getStatusIcon = (status: Order['status']) => {
+  switch (status) {
+    case 'processing':
+      return <Clock className="h-5 w-5 text-blue-500" />;
+    case 'shipped':
+      return <Package className="h-5 w-5 text-orange-500" />;
+    case 'delivered':
+      return <CheckCircle className="h-5 w-5 text-green-500" />;
+    case 'cancelled':
+      return <AlertTriangle className="h-5 w-5 text-red-500" />;
+    default:
+      return null;
+  }
+};
+
+const getStatusText = (status: Order['status']) => {
+  switch (status) {
+    case 'processing':
+      return 'Processing';
+    case 'shipped':
+      return 'Shipped';
+    case 'delivered':
+      return 'Delivered';
+    case 'cancelled':
+      return 'Cancelled';
+    default:
+      return '';
+  }
+};
+
+const getStatusColor = (status: Order['status']) => {
+  switch (status) {
+    case 'processing':
+      return 'bg-blue-100 text-blue-800';
+    case 'shipped':
+      return 'bg-orange-100 text-orange-800';
+    case 'delivered':
+      return 'bg-green-100 text-green-800';
+    case 'cancelled':
+      return 'bg-red-100 text-red-800';
+    default:
+      return 'bg-gray-100 text-gray-800';
+  }
+};
+
+const Orders = () => {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    // Simulate API fetch
+    const timer = setTimeout(() => {
+      setOrders(mockOrders);
+      setLoading(false);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  const handleViewOrder = (order: Order) => {
+    setSelectedOrder(order);
+  };
+  
+  const handleCloseDetails = () => {
+    setSelectedOrder(null);
+  };
 
   return (
     <Layout>
       <div className="container mx-auto px-4 py-20">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold text-farmfilo-darkGreen mb-6">My Orders</h1>
-          
-          {orders.length === 0 ? (
-            <Card>
-              <CardContent className="py-12 flex flex-col items-center justify-center">
-                <ShoppingCart className="h-16 w-16 text-gray-300 mb-4" />
-                <h3 className="text-xl font-semibold text-gray-700 mb-2">No Orders Yet</h3>
-                <p className="text-gray-500 max-w-sm text-center mb-6">
-                  You haven't placed any orders yet. Start shopping to see your orders here.
-                </p>
-                <Button 
-                  className="bg-farmfilo-primary hover:bg-farmfilo-darkGreen text-white" 
-                  asChild
-                >
-                  <Link to="/marketplace">
-                    Browse Products
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-          ) : (
-            <Tabs defaultValue="all" className="space-y-6">
-              <TabsList>
-                <TabsTrigger value="all">All Orders</TabsTrigger>
-                <TabsTrigger value="processing">Processing</TabsTrigger>
-                <TabsTrigger value="shipped">Shipped</TabsTrigger>
-                <TabsTrigger value="delivered">Delivered</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="all" className="space-y-6">
-                {orders.map((order) => (
-                  <OrderCard key={order.id} order={order} />
-                ))}
-              </TabsContent>
-              
-              <TabsContent value="processing" className="space-y-6">
-                {orders
-                  .filter(order => order.status === 'processing')
-                  .map((order) => (
-                    <OrderCard key={order.id} order={order} />
-                  ))}
-              </TabsContent>
-              
-              <TabsContent value="shipped" className="space-y-6">
-                {orders
-                  .filter(order => ['shipped', 'in_transit'].includes(order.status))
-                  .map((order) => (
-                    <OrderCard key={order.id} order={order} />
-                  ))}
-              </TabsContent>
-              
-              <TabsContent value="delivered" className="space-y-6">
-                {orders
-                  .filter(order => order.status === 'delivered')
-                  .map((order) => (
-                    <OrderCard key={order.id} order={order} />
-                  ))}
-              </TabsContent>
-            </Tabs>
-          )}
-        </div>
-      </div>
-    </Layout>
-  );
-};
-
-// Order Card Component
-const OrderCard = ({ order }: { order: OrderType }) => {
-  const orderDate = new Date(order.createdAt);
-  
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'processing':
-        return <Clock className="h-4 w-4" />;
-      case 'shipped':
-        return <Package className="h-4 w-4" />;
-      case 'in_transit':
-        return <Truck className="h-4 w-4" />;
-      case 'delivered':
-        return <CheckCircle2 className="h-4 w-4" />;
-      default:
-        return <Clock className="h-4 w-4" />;
-    }
-  };
-  
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'processing':
-        return 'bg-amber-100 text-amber-700';
-      case 'shipped':
-        return 'bg-blue-100 text-blue-700';
-      case 'in_transit':
-        return 'bg-indigo-100 text-indigo-700';
-      case 'delivered':
-        return 'bg-green-100 text-green-700';
-      default:
-        return 'bg-gray-100 text-gray-700';
-    }
-  };
-  
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'processing':
-        return 'Processing';
-      case 'shipped':
-        return 'Shipped';
-      case 'in_transit':
-        return 'In Transit';
-      case 'delivered':
-        return 'Delivered';
-      default:
-        return status;
-    }
-  };
-  
-  return (
-    <Card>
-      <CardHeader className="border-b">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex justify-between items-center mb-8">
           <div>
-            <div className="flex items-center gap-2">
-              <CardTitle className="text-farmfilo-darkGreen">Order #{order.id}</CardTitle>
-              {order.ecoFriendly && (
-                <Badge className="bg-green-500 hover:bg-green-600">
-                  <Leaf className="h-3 w-3 mr-1" /> Eco-Delivery
-                </Badge>
-              )}
-            </div>
-            <p className="text-sm text-gray-500 mt-1">Placed on {orderDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            <h1 className="text-3xl font-bold text-farmfilo-darkGreen mb-2">My Orders</h1>
+            <p className="text-gray-600">Track and manage your orders</p>
           </div>
-          <div className="flex items-center space-x-4">
-            <Badge className={`${getStatusColor(order.status)} flex items-center gap-1`}>
-              {getStatusIcon(order.status)}
-              {getStatusText(order.status)}
-            </Badge>
-          </div>
+          <Button 
+            onClick={() => navigate('/marketplace')}
+            className="bg-farmfilo-primary hover:bg-farmfilo-darkGreen"
+          >
+            <ShoppingCart className="mr-2 h-4 w-4" />
+            Continue Shopping
+          </Button>
         </div>
-      </CardHeader>
-      <CardContent className="pt-6">
-        <div className="flex flex-col md:flex-row">
-          <div className="md:w-2/3 mb-6 md:mb-0 md:pr-6">
-            <h3 className="font-medium mb-3">Order Items</h3>
-            <div className="space-y-3">
-              {order.items.map((item, idx) => (
-                <div key={idx} className="flex justify-between">
-                  <div>
-                    <span className="font-medium">{item.name}</span>
-                    <span className="text-gray-500 ml-1">×{item.quantity}</span>
-                  </div>
-                  <span>৳{item.price * item.quantity}</span>
-                </div>
-              ))}
+        
+        {loading ? (
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-8 w-1/3" />
+              <Skeleton className="h-4 w-1/4" />
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {Array(3).fill(0).map((_, i) => (
+                  <Skeleton key={i} className="h-16 w-full" />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ) : orders.length === 0 ? (
+          <Card>
+            <CardContent className="pt-6 flex flex-col items-center justify-center">
+              <div className="bg-gray-100 p-4 rounded-full mb-4">
+                <ShoppingCart className="h-12 w-12 text-gray-400" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">No Orders Yet</h3>
+              <p className="text-gray-500 mb-6 text-center">You haven't placed any orders yet. Start shopping to see your orders here.</p>
+              <Button 
+                onClick={() => navigate('/marketplace')}
+                className="bg-farmfilo-primary hover:bg-farmfilo-darkGreen"
+              >
+                Browse Products
+              </Button>
+            </CardContent>
+          </Card>
+        ) : selectedOrder ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <Button variant="ghost" onClick={handleCloseDetails}>
+                ← Back to Orders
+              </Button>
+              <div className={`px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2 ${getStatusColor(selectedOrder.status)}`}>
+                {getStatusIcon(selectedOrder.status)}
+                {getStatusText(selectedOrder.status)}
+              </div>
             </div>
             
-            <div className="border-t mt-4 pt-4">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Subtotal</span>
-                <span>৳{order.subtotal}</span>
-              </div>
-              <div className="flex justify-between text-sm mt-1">
-                <span className="text-gray-500">Delivery</span>
-                <span>৳{order.deliveryFee}</span>
-              </div>
-              <div className="flex justify-between font-medium mt-2">
-                <span>Total</span>
-                <span className="text-farmfilo-primary">৳{order.total}</span>
-              </div>
-            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Order #{selectedOrder.id}</CardTitle>
+                <CardDescription>Placed on {new Date(selectedOrder.date).toLocaleDateString()}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Product</TableHead>
+                      <TableHead className="text-right">Price</TableHead>
+                      <TableHead className="text-right">Quantity</TableHead>
+                      <TableHead className="text-right">Subtotal</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {selectedOrder.items.map((item) => (
+                      <TableRow key={item.id}>
+                        <TableCell>
+                          <div className="flex items-center space-x-3">
+                            <div className="h-12 w-12 rounded overflow-hidden">
+                              <img 
+                                src={item.image} 
+                                alt={item.name} 
+                                className="h-full w-full object-cover"
+                              />
+                            </div>
+                            <div>
+                              <p className="font-medium">{item.name}</p>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">৳{item.price}</TableCell>
+                        <TableCell className="text-right">{item.quantity}</TableCell>
+                        <TableCell className="text-right font-medium">৳{item.price * item.quantity}</TableCell>
+                      </TableRow>
+                    ))}
+                    <TableRow>
+                      <TableCell colSpan={3} className="text-right font-bold">
+                        Total
+                      </TableCell>
+                      <TableCell className="text-right font-bold text-farmfilo-primary">
+                        ৳{selectedOrder.total}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </CardContent>
+              <CardFooter className="flex justify-end">
+                <Button variant="outline" onClick={() => navigate('/marketplace')}>
+                  Buy Again
+                </Button>
+              </CardFooter>
+            </Card>
+            
+            {selectedOrder.status === 'shipped' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Delivery Information</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-600">Delivery Method</span>
+                      <span>Standard Delivery</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-600">Tracking Number</span>
+                      <span className="font-medium">TRK12345678BD</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-600">Estimated Delivery</span>
+                      <span>May 8, 2025</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
-          
-          <div className="border-t md:border-t-0 md:border-l pt-4 md:pt-0 md:pl-6 md:w-1/3">
-            <div className="flex flex-col h-full justify-between">
-              <div>
-                <h3 className="font-medium mb-2">Shipping Address</h3>
-                <p className="text-sm text-gray-700">{order.shipping.name}</p>
-                <p className="text-sm text-gray-700">{order.shipping.address}</p>
-                <p className="text-sm text-gray-700">{order.shipping.city}, {order.shipping.zipcode}</p>
+        ) : (
+          <Card>
+            <CardHeader>
+              <CardTitle>Order History</CardTitle>
+              <CardDescription>View and manage your recent orders</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {orders.map((order) => (
+                  <div 
+                    key={order.id} 
+                    className="border rounded-lg p-4 hover:border-farmfilo-primary transition-colors cursor-pointer"
+                    onClick={() => handleViewOrder(order)}
+                  >
+                    <div className="flex flex-col sm:flex-row justify-between">
+                      <div>
+                        <h3 className="font-semibold">Order #{order.id}</h3>
+                        <p className="text-sm text-gray-500">Placed on {new Date(order.date).toLocaleDateString()}</p>
+                      </div>
+                      <div className="flex flex-col sm:items-end mt-2 sm:mt-0">
+                        <div className={`px-3 py-1 rounded-full text-xs font-medium inline-flex items-center gap-2 ${getStatusColor(order.status)}`}>
+                          {getStatusIcon(order.status)}
+                          {getStatusText(order.status)}
+                        </div>
+                        <p className="text-sm font-medium mt-1">৳{order.total}</p>
+                      </div>
+                    </div>
+                    <div className="mt-3 flex items-center gap-2">
+                      <div className="flex -space-x-2">
+                        {order.items.slice(0, 3).map((item) => (
+                          <div 
+                            key={item.id} 
+                            className="h-8 w-8 rounded-full overflow-hidden border-2 border-white"
+                          >
+                            <img 
+                              src={item.image} 
+                              alt={item.name} 
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                        ))}
+                        {order.items.length > 3 && (
+                          <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-medium border-2 border-white">
+                            +{order.items.length - 3}
+                          </div>
+                        )}
+                      </div>
+                      <span className="text-sm text-gray-500">
+                        {order.items.length} {order.items.length === 1 ? 'item' : 'items'}
+                      </span>
+                      <Button variant="ghost" size="sm" className="ml-auto">
+                        View Details
+                      </Button>
+                    </div>
+                  </div>
+                ))}
               </div>
-              
-              <div className="mt-6">
-                <div className="text-xs bg-blue-50 text-blue-700 p-2 rounded-md mb-4 font-mono">
-                  Blockchain ID: {order.blockchainHash.slice(0, 14)}...
-                </div>
-                <Link to={`/order-tracking/${order.id}`}>
-                  <Button variant="outline" className="w-full flex items-center justify-center gap-1">
-                    Track Order <ExternalLink className="h-4 w-4 ml-1" /> 
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    </Layout>
   );
 };
 

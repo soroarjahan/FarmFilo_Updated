@@ -1,20 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { Product } from '@/types/product';
 import { toast } from '@/components/ui/sonner';
-
-export interface Product {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  farmer: string;
-  farm: string;
-  description?: string;
-  category: string;
-  inStock: boolean;
-  unit: string;
-  ecoFriendly: boolean;
-}
 
 export interface CartItem {
   product: Product;
@@ -24,103 +11,110 @@ export interface CartItem {
 interface CartContextType {
   cartItems: CartItem[];
   addToCart: (product: Product, quantity: number) => void;
-  removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
+  removeFromCart: (productId: string) => void;
   clearCart: () => void;
-  getCartTotal: () => number;
-  getCartCount: () => number;
+  totalItems: number;
+  subtotal: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-
-  // Load cart from localStorage on initial render
+  
+  // Load cart from localStorage when the component mounts
   useEffect(() => {
     const savedCart = localStorage.getItem('farmfilo_cart');
     if (savedCart) {
       try {
-        const parsedCart = JSON.parse(savedCart);
-        setCartItems(parsedCart);
+        setCartItems(JSON.parse(savedCart));
       } catch (error) {
-        console.error('Failed to parse saved cart', error);
+        console.error('Failed to parse stored cart', error);
         localStorage.removeItem('farmfilo_cart');
       }
     }
   }, []);
-
+  
   // Save cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('farmfilo_cart', JSON.stringify(cartItems));
   }, [cartItems]);
-
+  
+  // Calculate total items
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  
+  // Calculate subtotal
+  const subtotal = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+  
+  // Add product to cart
   const addToCart = (product: Product, quantity: number) => {
     setCartItems(prevItems => {
-      const existingItem = prevItems.find(item => item.product.id === product.id);
+      const existingItemIndex = prevItems.findIndex(item => item.product.id === product.id);
       
-      if (existingItem) {
-        const updatedItems = prevItems.map(item => 
-          item.product.id === product.id 
-            ? { ...item, quantity: item.quantity + quantity } 
-            : item
-        );
-        toast.success(`Updated ${product.name} quantity in cart`);
+      if (existingItemIndex > -1) {
+        const updatedItems = [...prevItems];
+        const newQuantity = updatedItems[existingItemIndex].quantity + quantity;
+        
+        if (newQuantity > product.quantityAvailable) {
+          toast.error(`Sorry, only ${product.quantityAvailable} items available.`);
+          return prevItems;
+        }
+        
+        updatedItems[existingItemIndex] = {
+          ...updatedItems[existingItemIndex],
+          quantity: newQuantity
+        };
         return updatedItems;
       } else {
-        toast.success(`Added ${product.name} to cart`);
+        if (quantity > product.quantityAvailable) {
+          toast.error(`Sorry, only ${product.quantityAvailable} items available.`);
+          return prevItems;
+        }
         return [...prevItems, { product, quantity }];
       }
     });
+    
+    toast.success(`${quantity} × ${product.name} added to cart.`);
   };
-
-  const removeFromCart = (productId: string) => {
+  
+  // Update item quantity
+  const updateQuantity = (productId: string, quantity: number) => {
     setCartItems(prevItems => {
-      const itemToRemove = prevItems.find(item => item.product.id === productId);
-      if (itemToRemove) {
-        toast.info(`Removed ${itemToRemove.product.name} from cart`);
-      }
-      return prevItems.filter(item => item.product.id !== productId);
+      return prevItems.map(item => {
+        if (item.product.id === productId) {
+          if (quantity > item.product.quantityAvailable) {
+            toast.error(`Sorry, only ${item.product.quantityAvailable} items available.`);
+            return item;
+          }
+          return { ...item, quantity };
+        }
+        return item;
+      });
     });
   };
-
-  const updateQuantity = (productId: string, quantity: number) => {
-    if (quantity <= 0) {
-      removeFromCart(productId);
-      return;
-    }
-
-    setCartItems(prevItems => 
-      prevItems.map(item => 
-        item.product.id === productId 
-          ? { ...item, quantity } 
-          : item
-      )
-    );
+  
+  // Remove item from cart
+  const removeFromCart = (productId: string) => {
+    setCartItems(prevItems => prevItems.filter(item => item.product.id !== productId));
+    toast.info('Item removed from cart.');
   };
-
+  
+  // Clear cart
   const clearCart = () => {
     setCartItems([]);
-    toast.info('Cart has been cleared');
-  };
-
-  const getCartTotal = () => {
-    return cartItems.reduce((total, item) => total + (item.product.price * item.quantity), 0);
-  };
-
-  const getCartCount = () => {
-    return cartItems.reduce((count, item) => count + item.quantity, 0);
+    toast.info('Cart cleared.');
   };
 
   return (
     <CartContext.Provider value={{
       cartItems,
       addToCart,
-      removeFromCart,
       updateQuantity,
+      removeFromCart,
       clearCart,
-      getCartTotal,
-      getCartCount
+      totalItems,
+      subtotal
     }}>
       {children}
     </CartContext.Provider>
