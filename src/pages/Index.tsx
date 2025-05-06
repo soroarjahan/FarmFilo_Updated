@@ -2,20 +2,24 @@
 import React from 'react';
 import Layout from '@/components/layout/Layout';
 import HeroSection from '@/components/home/HeroSection';
-import ServiceCards from '@/components/home/ServiceCards';
-import StatsSection from '@/components/home/StatsSection';
-import FeaturedPrograms from '@/components/home/FeaturedPrograms';
+import ServicesSection from '@/components/home/ServicesSection';
+import ImpactSection from '@/components/home/ImpactSection';
 import MarketplaceSection from '@/components/home/MarketplaceSection';
 import TestimonialsSection from '@/components/home/TestimonialsSection';
 import CTASection from '@/components/home/CTASection';
+import HarvestingSection from '@/components/home/HarvestingSection';
+import EquipmentRentalSection from '@/components/home/EquipmentRentalSection';
+import UrbanFarmingSection from '@/components/home/UrbanFarmingSection';
 
 const Index = () => {
   return (
     <Layout>
       <HeroSection />
-      <ServiceCards />
-      <StatsSection />
-      <FeaturedPrograms />
+      <ServicesSection />
+      <HarvestingSection />
+      <EquipmentRentalSection />
+      <UrbanFarmingSection />
+      <ImpactSection />
       <MarketplaceSection />
       <TestimonialsSection />
       <CTASection />
