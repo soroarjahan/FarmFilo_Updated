@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/components/ui/sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search, Box, TruckDelivery, ClipboardCheck, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { Search, Box, Truck, ClipboardCheck, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
 // Demo order data
 const mockOrders = [
@@ -169,7 +168,7 @@ const OrderManagement = () => {
             className="text-indigo-600"
             onClick={() => updateOrderStatus(order.id, 'shipped')}
           >
-            <TruckDelivery className="h-3.5 w-3.5 mr-1" />
+            <Truck className="h-3.5 w-3.5 mr-1" />
             Mark as Shipped
           </Button>
         );

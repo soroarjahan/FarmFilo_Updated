@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { toast } from '@/components/ui/sonner'; 
 
@@ -43,7 +42,7 @@ const DEMO_ACCOUNTS = {
     name: 'John Farmer',
     email: 'farmer@farmfilo.com',
     password: 'password123',
-    roles: ['farmer'],
+    roles: ['farmer' as UserRole],
     avatar: 'https://i.pravatar.cc/150?u=johnfarmer'
   },
   supervisor: {
@@ -51,7 +50,7 @@ const DEMO_ACCOUNTS = {
     name: 'Sam Supervisor',
     email: 'supervisor@farmfilo.com',
     password: 'password123',
-    roles: ['fieldSupervisor'],
+    roles: ['fieldSupervisor' as UserRole],
     avatar: 'https://i.pravatar.cc/150?u=samsupervisor'
   }
 };
@@ -61,7 +60,7 @@ const MOCK_USER: User = {
   id: 'user-1',
   name: 'John Doe',
   email: 'john@example.com',
-  roles: ['farmer', 'customer'],
+  roles: ['farmer', 'customer'] as UserRole[],
   avatar: 'https://i.pravatar.cc/150?u=john'
 };
 
@@ -100,7 +99,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       // Check for demo accounts first
       if (email === DEMO_ACCOUNTS.farmer.email && password === DEMO_ACCOUNTS.farmer.password) {
-        const farmerUser = { 
+        const farmerUser: User = { 
           id: DEMO_ACCOUNTS.farmer.id, 
           name: DEMO_ACCOUNTS.farmer.name, 
           email: DEMO_ACCOUNTS.farmer.email,
@@ -114,7 +113,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       } 
       
       if (email === DEMO_ACCOUNTS.supervisor.email && password === DEMO_ACCOUNTS.supervisor.password) {
-        const supervisorUser = { 
+        const supervisorUser: User = { 
           id: DEMO_ACCOUNTS.supervisor.id, 
           name: DEMO_ACCOUNTS.supervisor.name, 
           email: DEMO_ACCOUNTS.supervisor.email,
@@ -218,7 +217,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         id: 'social-123',
         name: 'Social User',
         email: 'social@example.com',
-        roles: ['consumer']
+        roles: ['consumer' as UserRole]
       });
       
       setIsAuthenticated(true);
