@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Chart, LineChart } from 'lucide-react';
+import { ChartLine, LineChart } from 'lucide-react';
 import { Product } from '@/types/product';
 import { mockProducts } from '@/data/mockProducts';
 import {
@@ -315,7 +314,7 @@ const FarmerPortal = () => {
               <CardContent>
                 <div className="text-center py-10">
                   <div className="inline-flex items-center justify-center h-20 w-20 bg-gray-100 rounded-full mb-6">
-                    <Chart className="h-10 w-10 text-gray-400" />
+                    <ChartLine className="h-10 w-10 text-gray-400" />
                   </div>
                   <h3 className="text-xl font-semibold mb-4">Orders coming soon</h3>
                   <p className="text-gray-500 mb-6 max-w-md mx-auto">
