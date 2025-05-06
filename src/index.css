@@ -14,16 +14,16 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
  
-    --primary: 142 56% 34%;
+    --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
  
-    --secondary: 84 42% 65%;
+    --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
  
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
  
-    --accent: 43 91% 67%;
+    --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
  
     --destructive: 0 84.2% 60.2%;
@@ -31,9 +31,18 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 142 56% 34%;
+    --ring: 222.2 84% 4.9%;
  
     --radius: 0.5rem;
+
+    /* FarmFilo custom colors */
+    --farmfilo-primary: 142 70% 45%;      /* #4ade80 - Green */
+    --farmfilo-secondary: 104 94% 72%;    /* #c6ff6c - Light Green */
+    --farmfilo-accent: 50 92% 85%;        /* #fef08a - Yellow */
+    --farmfilo-cream: 48 52% 96%;         /* #fbf9ef - Cream */
+    --farmfilo-brown: 26 30% 40%;         /* #8b6d4d - Brown */
+    --farmfilo-darkGreen: 141 79% 20%;    /* #166534 - Dark Green */
+    --farmfilo-lightGreen: 140 55% 95%;   /* #ecfdf5 - Light Green */
   }
  
   .dark {
@@ -65,39 +74,106 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
   }
-}
- 
-@layer base {
-  * {
-    @apply border-border;
+
+  /* Apply Montserrat font family globally */
+  html {
+    font-family: 'Montserrat', sans-serif;
   }
+
   body {
     @apply bg-background text-foreground;
+    font-family: 'Montserrat', sans-serif;
   }
-  
+
   h1, h2, h3, h4, h5, h6 {
-    @apply font-playfair;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+  }
+
+  /* Additional font styles */
+  .font-heading {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+/* Custom animations */
+@layer utilities {
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-in-out forwards;
+  }
+
+  .animate-grow {
+    animation: grow 0.4s ease-out forwards;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes grow {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Custom pattern backgrounds */
+.leaf-pattern {
+  background-color: #ffffff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%234ade80' fill-opacity='0.05'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'%3E%3C/path%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Tooltip styles */
+.tooltip {
+  @apply relative inline-block;
+}
+
+.tooltip .tooltiptext {
+  @apply invisible absolute z-10 bg-gray-800 text-white text-center py-2 px-4 rounded-md opacity-0;
+  @apply transition-opacity duration-300;
+  @apply text-sm whitespace-nowrap;
+  width: max-content;
+  max-width: 250px;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip .tooltiptext::after {
+  @apply absolute border-solid;
+  content: "";
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  @apply visible opacity-100;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .mobile-scroll {
+    @apply overflow-x-auto pb-4;
+    -webkit-overflow-scrolling: touch;
   }
   
-  p, a, span, button, li {
-    @apply font-montserrat;
+  .mobile-stack {
+    @apply flex-col;
   }
-}
-
-.leaf-pattern {
-  position: relative;
-  overflow: hidden;
-}
-
-.leaf-pattern::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="%23E6F5E430" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M15 8a5 5 0 0 0-9.7-1c-1.4 1.1-2.2 2.7-2.3 4.3-.1 2.3.9 4.7 2.5 6.5A3 3 0 0 0 8 21a3 3 0 0 0 4 0 3 3 0 0 0 2.5-3"/><path d="M10 17V5c0-1.7 1.3-3 3-3s3 1.3 3 3v12c0 1.7-1.3 3-3 3s-3-1.3-3-3z"/></svg>');
-  opacity: 0.1;
-  z-index: -1;
-  pointer-events: none;
 }

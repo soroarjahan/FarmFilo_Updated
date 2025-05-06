@@ -1,52 +1,38 @@
 
-import { formatDistance, format, differenceInDays, parseISO, isValid } from 'date-fns';
+import { formatDistanceToNow as formatDistance, format } from 'date-fns';
 
-export function formatDistanceToNow(date: Date): string {
+export const formatDate = (dateString: string): string => {
   try {
-    return formatDistance(date, new Date(), { addSuffix: false });
+    return format(new Date(dateString), 'MMM d, yyyy');
   } catch (error) {
-    console.error('Error formatting date', error);
-    return '';
-  }
-}
-
-export function formatDate(dateString: string, formatStr: string = 'MMM d, yyyy'): string {
-  try {
-    const date = typeof dateString === 'string' ? parseISO(dateString) : dateString;
-    if (!isValid(date)) {
-      return 'Invalid date';
-    }
-    return format(date, formatStr);
-  } catch (error) {
-    console.error('Error formatting date', error);
     return 'Invalid date';
   }
-}
+};
 
-export function getRemainingDays(dateString: string): number {
+export const formatDistanceToNow = (dateString: string): string => {
   try {
-    const targetDate = parseISO(dateString);
-    if (!isValid(targetDate)) {
-      return 0;
-    }
-    const today = new Date();
-    const diff = differenceInDays(targetDate, today);
-    return diff > 0 ? diff : 0;
+    return formatDistance(new Date(dateString), { addSuffix: true });
   } catch (error) {
-    console.error('Error calculating remaining days', error);
+    return 'Unknown time';
+  }
+};
+
+export const daysRemaining = (dateString: string): number => {
+  try {
+    const targetDate = new Date(dateString);
+    const today = new Date();
+    const diffTime = targetDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays > 0 ? diffDays : 0;
+  } catch (error) {
     return 0;
   }
-}
+};
 
-export function isDatePast(dateString: string): boolean {
-  try {
-    const targetDate = parseISO(dateString);
-    if (!isValid(targetDate)) {
-      return false;
-    }
-    return targetDate < new Date();
-  } catch (error) {
-    console.error('Error checking if date is past', error);
-    return false;
-  }
-}
+export const getMonthName = (monthNumber: number): string => {
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  return months[monthNumber - 1] || '';
+};

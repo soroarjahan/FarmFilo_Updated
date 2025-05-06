@@ -2,28 +2,19 @@
 export interface Product {
   id: string;
   name: string;
-  description: string;
-  price: number;
   image: string;
-  category: string;
+  price: number;
   farmer: string;
   farm: string;
+  category: string;
+  inStock: boolean;
   unit: string;
+  ecoFriendly: boolean;
   organic: boolean;
-  quantityAvailable: number;
-  sellingMethod: 'fixed' | 'auction';
-  deliveryWindow?: {
-    start: string;
-    end: string;
-  };
-  auctionEnds?: string;
-  cropData?: {
-    plantingDate?: string;
-    expectedHarvestDate?: string;
-    actualYield?: number;
-    expectedYield?: number;
-    fieldLocation?: string;
-  };
+  description: string;
+  rating?: number;
+  reviews?: number;
+  location: string;
 }
 
 export interface ImageAnalysisResult {
@@ -35,4 +26,12 @@ export interface ImageAnalysisResult {
   stressPercentage: number;
   diseasePercentage: number;
   notes?: string;
+}
+
+export interface FilterOptions {
+  category: string;
+  priceRange: [number, number];
+  organicOnly: boolean;
+  location: string;
+  sortBy: 'default' | 'price-low' | 'price-high' | 'rating';
 }
