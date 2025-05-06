@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,9 +9,13 @@ import MyCrops from '@/components/farmer/MyCrops';
 import YieldData from '@/components/farmer/YieldData';
 import Activities from '@/components/farmer/Activities';
 import ImageAnalysis from '@/components/farmer/ImageAnalysis';
+import ProductListings from '@/components/farmer/ProductListings';
+import InventoryManagement from '@/components/farmer/InventoryManagement';
+import OrderManagement from '@/components/farmer/OrderManagement';
 import Layout from '@/components/layout/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/components/ui/sonner';
+import { Badge } from '@/components/ui/badge';
 import {
   AlertCircle,
   Info,
@@ -21,9 +26,11 @@ import {
   Camera,
   Tractor,
   ListChecks,
-  TrendingUp
+  TrendingUp,
+  Package,
+  ShoppingBasket,
+  ClipboardList
 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 
 const FarmerPortal = () => {
   const { user, isLoading } = useAuth();
@@ -50,7 +57,10 @@ const FarmerPortal = () => {
       crops: "Manage your crops, track growth progress, and plan harvests.",
       analytics: "View yield data analytics and performance metrics for your farm.",
       activities: "Manage farm activities, schedules, and assign tasks.",
-      imaging: "Upload and analyze field images to detect potential issues."
+      imaging: "Upload and analyze field images to detect potential issues.",
+      products: "Manage your product listings, add new products, or edit existing ones.",
+      inventory: "Track inventory levels and update stock quantities.",
+      orders: "Manage customer orders and track order status."
     };
     
     toast.info(helpMessages[section] || "Need help? Contact our support team.");
@@ -76,7 +86,7 @@ const FarmerPortal = () => {
             </Button>
             <Button 
               className="bg-farmfilo-primary hover:bg-farmfilo-darkGreen"
-              onClick={() => toast.info("New features available! Check out the Image Analysis tool.")}
+              onClick={() => toast.info("New features available! Check out the Products and Orders sections.")}
             >
               What's New
             </Button>
@@ -90,7 +100,8 @@ const FarmerPortal = () => {
             <AlertTitle className="text-farmfilo-darkGreen">Welcome to your Farmer Portal</AlertTitle>
             <AlertDescription className="text-gray-600">
               <p className="mb-2">
-                This is your central dashboard to manage crops, view analytics, schedule activities, and analyze field images. 
+                This is your central dashboard to manage crops, view analytics, schedule activities, 
+                analyze field images, manage products, track inventory, and fulfill orders.
               </p>
               <div className="flex flex-wrap gap-2 mt-3">
                 <Button 
@@ -137,12 +148,12 @@ const FarmerPortal = () => {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between py-2">
-              <CardTitle className="text-sm font-medium">Monthly Yield</CardTitle>
-              <BarChart3 className="h-4 w-4 text-farmfilo-primary" />
+              <CardTitle className="text-sm font-medium">Products</CardTitle>
+              <Package className="h-4 w-4 text-farmfilo-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">320 kg</div>
-              <p className="text-xs text-green-500">↑ 12% from last month</p>
+              <div className="text-2xl font-bold">12</div>
+              <p className="text-xs text-green-500">3 new orders today</p>
             </CardContent>
           </Card>
           <Card>
@@ -164,11 +175,26 @@ const FarmerPortal = () => {
           onValueChange={setActiveTab} 
           className="space-y-6"
         >
-          <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2">
+          <TabsList className="grid grid-cols-2 md:grid-cols-8 gap-2">
             <TabsTrigger value="overview" className="flex items-center">
               <Leaf className="w-4 h-4 mr-2" />
               <span className="hidden md:inline">Overview</span>
               <span className="md:hidden">Overview</span>
+            </TabsTrigger>
+            <TabsTrigger value="products" className="flex items-center">
+              <ShoppingBasket className="w-4 h-4 mr-2" />
+              <span className="hidden md:inline">Products</span>
+              <span className="md:hidden">Products</span>
+            </TabsTrigger>
+            <TabsTrigger value="inventory" className="flex items-center">
+              <Package className="w-4 h-4 mr-2" />
+              <span className="hidden md:inline">Inventory</span>
+              <span className="md:hidden">Inventory</span>
+            </TabsTrigger>
+            <TabsTrigger value="orders" className="flex items-center">
+              <ClipboardList className="w-4 h-4 mr-2" />
+              <span className="hidden md:inline">Orders</span>
+              <span className="md:hidden">Orders</span>
             </TabsTrigger>
             <TabsTrigger value="crops" className="flex items-center">
               <Tractor className="w-4 h-4 mr-2" />
@@ -367,6 +393,51 @@ const FarmerPortal = () => {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+          
+          <TabsContent value="products" className="relative">
+            <div className="absolute right-0 top-0 tooltip">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="text-gray-500 hover:text-farmfilo-primary"
+                onClick={() => displayHelp('products')}
+              >
+                <HelpCircle className="h-5 w-5" />
+                <span className="tooltiptext">Get help with product management</span>
+              </Button>
+            </div>
+            <ProductListings />
+          </TabsContent>
+          
+          <TabsContent value="inventory" className="relative">
+            <div className="absolute right-0 top-0 tooltip">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="text-gray-500 hover:text-farmfilo-primary"
+                onClick={() => displayHelp('inventory')}
+              >
+                <HelpCircle className="h-5 w-5" />
+                <span className="tooltiptext">Get help with inventory management</span>
+              </Button>
+            </div>
+            <InventoryManagement />
+          </TabsContent>
+          
+          <TabsContent value="orders" className="relative">
+            <div className="absolute right-0 top-0 tooltip">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="text-gray-500 hover:text-farmfilo-primary"
+                onClick={() => displayHelp('orders')}
+              >
+                <HelpCircle className="h-5 w-5" />
+                <span className="tooltiptext">Get help with order management</span>
+              </Button>
+            </div>
+            <OrderManagement />
           </TabsContent>
           
           <TabsContent value="crops" className="relative">

@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { toast } from '@/components/ui/sonner'; // Changed from react-toastify to sonner which is already installed
+import { toast } from '@/components/ui/sonner'; 
 
 export type UserRole = 'customer' | 'farmer' | 'fieldSupervisor' | 'admin' | 'consumer';
 
@@ -34,6 +34,26 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
+};
+
+// Demo accounts for logging in
+const DEMO_ACCOUNTS = {
+  farmer: {
+    id: 'farmer-1',
+    name: 'John Farmer',
+    email: 'farmer@farmfilo.com',
+    password: 'password123',
+    roles: ['farmer'],
+    avatar: 'https://i.pravatar.cc/150?u=johnfarmer'
+  },
+  supervisor: {
+    id: 'supervisor-1',
+    name: 'Sam Supervisor',
+    email: 'supervisor@farmfilo.com',
+    password: 'password123',
+    roles: ['fieldSupervisor'],
+    avatar: 'https://i.pravatar.cc/150?u=samsupervisor'
+  }
 };
 
 // Mock user for development
@@ -78,10 +98,37 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // In a real app, this would make an API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Check for demo accounts first
+      if (email === DEMO_ACCOUNTS.farmer.email && password === DEMO_ACCOUNTS.farmer.password) {
+        const farmerUser = { 
+          id: DEMO_ACCOUNTS.farmer.id, 
+          name: DEMO_ACCOUNTS.farmer.name, 
+          email: DEMO_ACCOUNTS.farmer.email,
+          roles: DEMO_ACCOUNTS.farmer.roles,
+          avatar: DEMO_ACCOUNTS.farmer.avatar
+        };
+        setUser(farmerUser);
+        localStorage.setItem('user', JSON.stringify(farmerUser));
+        toast.success(`Welcome, ${farmerUser.name}!`);
+        return;
+      } 
       
-      // Mock successful login
+      if (email === DEMO_ACCOUNTS.supervisor.email && password === DEMO_ACCOUNTS.supervisor.password) {
+        const supervisorUser = { 
+          id: DEMO_ACCOUNTS.supervisor.id, 
+          name: DEMO_ACCOUNTS.supervisor.name, 
+          email: DEMO_ACCOUNTS.supervisor.email,
+          roles: DEMO_ACCOUNTS.supervisor.roles,
+          avatar: DEMO_ACCOUNTS.supervisor.avatar
+        };
+        setUser(supervisorUser);
+        localStorage.setItem('user', JSON.stringify(supervisorUser));
+        toast.success(`Welcome, ${supervisorUser.name}!`);
+        return;
+      }
+      
+      // Mock successful login for other accounts
+      await new Promise(resolve => setTimeout(resolve, 1000));
       setUser(MOCK_USER);
       localStorage.setItem('user', JSON.stringify(MOCK_USER));
     } catch (error) {
