@@ -10,6 +10,7 @@ import CTASection from '@/components/home/CTASection';
 import HarvestingSection from '@/components/home/HarvestingSection';
 import EquipmentRentalSection from '@/components/home/EquipmentRentalSection';
 import UrbanFarmingSection from '@/components/home/UrbanFarmingSection';
+import BlogSection from '@/components/home/BlogSection';
 
 const Index = () => {
   return (
@@ -21,6 +22,7 @@ const Index = () => {
       <UrbanFarmingSection />
       <ImpactSection />
       <MarketplaceSection />
+      <BlogSection />
       <TestimonialsSection />
       <CTASection />
     </Layout>

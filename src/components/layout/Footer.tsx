@@ -1,12 +1,48 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, MapPin, Phone, Facebook, Linkedin, Instagram, Youtube } from 'lucide-react';
+import { Mail, MapPin, Phone, Facebook, Linkedin, Instagram, Youtube, ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { toast } from '@/components/ui/sonner';
 
 const Footer = () => {
+  const [email, setEmail] = useState('');
+  
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast.success("Thanks for subscribing! You'll receive updates soon.");
+    setEmail('');
+  };
+  
   return (
     <footer className="bg-white border-t border-gray-200 font-montserrat">
       <div className="container mx-auto px-4 py-12">
+        {/* Newsletter Section */}
+        <div className="mb-12 p-6 bg-farmfilo-primary/10 rounded-lg">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div>
+              <h3 className="text-xl md:text-2xl font-bold text-farmfilo-primary">Subscribe to Our Newsletter</h3>
+              <p className="mt-2 text-gray-600">Stay updated with our latest organic farming tips and product offerings.</p>
+            </div>
+            <div>
+              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
+                <Input 
+                  type="email" 
+                  placeholder="Enter your email" 
+                  className="flex-grow" 
+                  value={email} 
+                  onChange={(e) => setEmail(e.target.value)} 
+                  required 
+                />
+                <Button type="submit" className="bg-farmfilo-primary hover:bg-farmfilo-darkGreen">
+                  Subscribe <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </form>
+            </div>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Column 1 */}
           <div>
