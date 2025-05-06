@@ -10,11 +10,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Column 1 */}
           <div>
-            <div className="flex items-center mb-4">
+            <div className="flex items-center mb-6">
               <img 
                 src="https://i.postimg.cc/qqpsSXn7/Farmfilo-Logo.png" 
                 alt="FarmFilo Logo" 
-                className="h-10"
+                className="h-16" // Significantly enlarged footer logo
               />
             </div>
             <p className="mb-4 text-gray-600">Transforming conventional farming into organic farming, ensuring chemical-free, nutritious food while reducing pollution and restoring biodiversity.</p>

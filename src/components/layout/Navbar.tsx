@@ -85,7 +85,7 @@ const Navbar = () => {
           <img 
             src="https://i.postimg.cc/qqpsSXn7/Farmfilo-Logo.png" 
             alt="FarmFilo Logo" 
-            className="h-10"
+            className="h-12 md:h-14" // Increased logo size
           />
         </Link>
 
@@ -384,7 +384,7 @@ const Navbar = () => {
               <img 
                 src="https://i.postimg.cc/qqpsSXn7/Farmfilo-Logo.png" 
                 alt="FarmFilo Logo" 
-                className="h-8"
+                className="h-10" // Slightly increased mobile logo size
               />
             </Link>
             <Link to="/" className={cn(
