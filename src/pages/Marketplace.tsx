@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useCart } from '@/contexts/CartContext';
 import { Product, FilterOptions } from '@/types/product';
@@ -48,7 +49,9 @@ const productsData: Product[] = [
     ecoFriendly: true,
     organic: true,
     location: "Dhaka",
-    description: "Premium quality organic rice grown with traditional farming methods. No chemicals, no pesticides."
+    description: "Premium quality organic rice grown with traditional farming methods. No chemicals, no pesticides.",
+    quantityAvailable: 100,
+    sellingMethod: 'fixed'
   },
   {
     id: "2",
@@ -63,7 +66,9 @@ const productsData: Product[] = [
     ecoFriendly: true,
     organic: true,
     location: "Rajshahi",
-    description: "Freshly harvested organic vegetables. Direct from farm to your table."
+    description: "Freshly harvested organic vegetables. Direct from farm to your table.",
+    quantityAvailable: 50,
+    sellingMethod: 'fixed'
   },
   {
     id: "3",
@@ -78,7 +83,9 @@ const productsData: Product[] = [
     ecoFriendly: true,
     organic: true,
     location: "Sylhet",
-    description: "Sweet and nutritious organic fruits. Grown with care and harvested at peak ripeness."
+    description: "Sweet and nutritious organic fruits. Grown with care and harvested at peak ripeness.",
+    quantityAvailable: 30,
+    sellingMethod: 'fixed'
   },
   {
     id: "4",
@@ -93,7 +100,9 @@ const productsData: Product[] = [
     ecoFriendly: true,
     organic: false,
     location: "Khulna",
-    description: "Free-range eggs from happy, healthy hens."
+    description: "Free-range eggs from happy, healthy hens.",
+    quantityAvailable: 25,
+    sellingMethod: 'fixed'
   },
   {
     id: "5",
@@ -108,7 +117,9 @@ const productsData: Product[] = [
     ecoFriendly: true,
     organic: true,
     location: "Barisal",
-    description: "Pure, unprocessed honey from local beekeepers."
+    description: "Pure, unprocessed honey from local beekeepers.",
+    quantityAvailable: 20,
+    sellingMethod: 'fixed'
   },
   {
     id: "6",
@@ -123,7 +134,9 @@ const productsData: Product[] = [
     ecoFriendly: false,
     organic: false,
     location: "Dhaka",
-    description: "A collection of authentic Bangladeshi spices."
+    description: "A collection of authentic Bangladeshi spices.",
+    quantityAvailable: 15,
+    sellingMethod: 'fixed'
   }
 ];
 

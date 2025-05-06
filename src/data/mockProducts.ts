@@ -13,6 +13,9 @@ export const mockProducts: Product[] = [
     category: "Grains",
     unit: "kg",
     organic: true,
+    inStock: true,
+    ecoFriendly: true,
+    location: "Dhaka",
     quantityAvailable: 150,
     sellingMethod: 'fixed'
   },
@@ -27,6 +30,9 @@ export const mockProducts: Product[] = [
     category: "Vegetables",
     unit: "kg",
     organic: true,
+    inStock: true,
+    ecoFriendly: true,
+    location: "Rajshahi",
     quantityAvailable: 75,
     sellingMethod: 'fixed'
   },
@@ -41,6 +47,9 @@ export const mockProducts: Product[] = [
     category: "Fruits",
     unit: "kg",
     organic: true,
+    inStock: true,
+    ecoFriendly: true,
+    location: "Sylhet",
     quantityAvailable: 50,
     sellingMethod: 'fixed'
   },
@@ -55,6 +64,9 @@ export const mockProducts: Product[] = [
     category: "Dairy & Honey",
     unit: "jar",
     organic: true,
+    inStock: true,
+    ecoFriendly: true,
+    location: "Khulna",
     quantityAvailable: 35,
     sellingMethod: 'fixed'
   },
@@ -69,6 +81,9 @@ export const mockProducts: Product[] = [
     category: "Fruits",
     unit: "piece",
     organic: true,
+    inStock: true,
+    ecoFriendly: true,
+    location: "Barisal",
     quantityAvailable: 20,
     sellingMethod: 'auction',
     auctionEnds: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString()
@@ -84,6 +99,9 @@ export const mockProducts: Product[] = [
     category: "Oils & Spices",
     unit: "liter",
     organic: true,
+    inStock: true,
+    ecoFriendly: true,
+    location: "Dhaka",
     quantityAvailable: 40,
     sellingMethod: 'fixed'
   },
@@ -98,6 +116,9 @@ export const mockProducts: Product[] = [
     category: "Fish & Meat",
     unit: "kg",
     organic: true,
+    inStock: true,
+    ecoFriendly: true,
+    location: "Chittagong",
     quantityAvailable: 15,
     sellingMethod: 'auction',
     auctionEnds: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString()
@@ -113,6 +134,9 @@ export const mockProducts: Product[] = [
     category: "Oils & Spices",
     unit: "kg",
     organic: true,
+    inStock: true,
+    ecoFriendly: true,
+    location: "Sylhet",
     quantityAvailable: 60,
     sellingMethod: 'fixed'
   },
@@ -127,6 +151,9 @@ export const mockProducts: Product[] = [
     category: "Dairy & Eggs",
     unit: "dozen",
     organic: true,
+    inStock: true,
+    ecoFriendly: true,
+    location: "Rajshahi",
     quantityAvailable: 45,
     sellingMethod: 'fixed'
   },
@@ -141,6 +168,9 @@ export const mockProducts: Product[] = [
     category: "Sweeteners",
     unit: "kg",
     organic: true,
+    inStock: true,
+    ecoFriendly: true,
+    location: "Khulna",
     quantityAvailable: 30,
     sellingMethod: 'fixed'
   },
@@ -155,6 +185,9 @@ export const mockProducts: Product[] = [
     category: "Vegetables",
     unit: "kg",
     organic: true,
+    inStock: true,
+    ecoFriendly: true,
+    location: "Dhaka",
     quantityAvailable: 25,
     sellingMethod: 'fixed'
   },
@@ -169,6 +202,9 @@ export const mockProducts: Product[] = [
     category: "Dairy & Honey",
     unit: "kg",
     organic: true,
+    inStock: true,
+    ecoFriendly: true,
+    location: "Rajshahi",
     quantityAvailable: 20,
     sellingMethod: 'fixed'
   }

@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { toast } from 'react-toastify';
 
-export type UserRole = 'customer' | 'farmer' | 'fieldSupervisor' | 'admin';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { toast } from '@/components/ui/sonner'; // Changed from react-toastify to sonner which is already installed
+
+export type UserRole = 'customer' | 'farmer' | 'fieldSupervisor' | 'admin' | 'consumer';
 
 interface User {
   id: string;

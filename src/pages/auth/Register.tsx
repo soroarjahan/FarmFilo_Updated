@@ -35,7 +35,7 @@ const registerSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
   email: z.string().email({ message: 'Please enter a valid email address' }),
   phone: z.string().min(11, { message: 'Phone number must be at least 11 characters' }).optional(),
-  role: z.enum(['farmer', 'fieldSupervisor', 'consumer']),
+  role: z.enum(['farmer', 'fieldSupervisor', 'consumer', 'customer', 'admin'] as const), // Match UserRole enum
   password: z.string().min(8, { message: 'Password must be at least 8 characters' }),
   confirmPassword: z.string(),
   terms: z.boolean().refine(val => val === true, {
@@ -220,6 +220,8 @@ const Register = () => {
                               <SelectItem value="farmer">Farmer</SelectItem>
                               <SelectItem value="fieldSupervisor">Field Supervisor</SelectItem>
                               <SelectItem value="consumer">Consumer</SelectItem>
+                              <SelectItem value="customer">Customer</SelectItem>
+                              <SelectItem value="admin">Admin</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
