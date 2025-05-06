@@ -24,6 +24,7 @@ import Support from "./pages/Support";
 import Community from "./pages/Community";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import OrderTracking from "./pages/OrderTracking";
@@ -53,6 +54,7 @@ const App = () => (
               <Route path="/community" element={<Community />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
               
               {/* Shopping cart routes */}
               <Route path="/cart" element={<Cart />} />
