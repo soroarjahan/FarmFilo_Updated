@@ -10,12 +10,15 @@ interface CartItem {
 
 interface CartContextType {
   cart: CartItem[];
+  cartItems: CartItem[]; // Added alias for cart for compatibility
   addToCart: (product: Product, quantity: number) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
   getCartTotal: () => number;
   getCartCount: () => number;
+  totalItems: number; // Added for convenience
+  subtotal: number; // Added for convenience
 }
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -80,16 +83,23 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return cart.reduce((count, item) => count + item.quantity, 0);
   };
 
+  // Calculate these values for easier access
+  const totalItems = getCartCount();
+  const subtotal = getCartTotal();
+
   return (
     <CartContext.Provider 
       value={{ 
         cart, 
+        cartItems: cart, // Alias for compatibility
         addToCart, 
         removeFromCart, 
         updateQuantity, 
         clearCart, 
         getCartTotal,
-        getCartCount
+        getCartCount,
+        totalItems,
+        subtotal
       }}
     >
       {children}

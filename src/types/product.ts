@@ -15,6 +15,9 @@ export interface Product {
   rating?: number;
   reviews?: number;
   location: string;
+  quantityAvailable: number;
+  sellingMethod: 'fixed' | 'auction';
+  auctionEnds?: string;
 }
 
 export interface ImageAnalysisResult {

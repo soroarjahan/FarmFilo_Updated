@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { z } from 'zod';
@@ -48,6 +47,9 @@ const registerSchema = z.object({
 });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
+
+// Update the UserRole type at the top of the file
+type UserRole = 'farmer' | 'fieldSupervisor' | 'consumer';
 
 const Register = () => {
   const { register, socialLogin, isLoading } = useAuth();

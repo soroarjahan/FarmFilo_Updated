@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,6 +23,7 @@ import {
   ListChecks,
   TrendingUp
 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 const FarmerPortal = () => {
   const { user, isLoading } = useAuth();

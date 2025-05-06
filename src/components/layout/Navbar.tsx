@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -38,8 +37,8 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuth();
-  const { cartItems } = useCart();
-  const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const { cart, getCartCount } = useCart();
+  const totalItems = getCartCount();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,6 +58,9 @@ const Navbar = () => {
   const isActive = (path: string) => {
     return location.pathname === path;
   };
+
+  const isUserFarmer = user?.roles?.includes('farmer') || user?.roles?.includes('admin');
+  const isUserFieldSupervisor = user?.roles?.includes('fieldSupervisor') || user?.roles?.includes('admin');
 
   const handleLogout = () => {
     logout();
@@ -247,7 +249,7 @@ const Navbar = () => {
         <div className="hidden lg:flex items-center space-x-1">
           <Link to="/support" className={cn(
             "px-3 py-2 rounded-md font-montserrat font-medium transition-colors hover:bg-farmfilo-lightGreen/30 flex items-center gap-1",
-            isActive("/support") ? "text-farmfilo-primary" : "text-gray-700 hover:text-farmfilo-primary"
+            location.pathname === "/support" ? "text-farmfilo-primary" : "text-gray-700 hover:text-farmfilo-primary"
           )}>
             <Phone className="h-4 w-4" />
             Support
@@ -266,14 +268,14 @@ const Navbar = () => {
                 </Button>
               </Link>
               
-              {user?.role === 'farmer' && (
+              {isUserFarmer && (
                 <Button variant="outline" className="font-montserrat border-farmfilo-primary text-farmfilo-primary hover:bg-farmfilo-primary hover:text-white rounded-full px-5" asChild>
                   <Link to="/farmer-portal">
                     Farmer Portal
                   </Link>
                 </Button>
               )}
-              {user?.role === 'fieldSupervisor' && (
+              {isUserFieldSupervisor && (
                 <Button variant="outline" className="font-montserrat border-farmfilo-primary text-farmfilo-primary hover:bg-farmfilo-primary hover:text-white rounded-full px-5" asChild>
                   <Link to="/field-supervisor">
                     Field Portal
@@ -308,13 +310,13 @@ const Navbar = () => {
                     <ShoppingCart className="h-4 w-4 mr-2" />
                     My Orders
                   </DropdownMenuItem>
-                  {user?.role === 'farmer' && (
+                  {isUserFarmer && (
                     <DropdownMenuItem onClick={() => navigate('/farmer-portal')}>
                       <Users className="h-4 w-4 mr-2" />
                       Farmer Portal
                     </DropdownMenuItem>
                   )}
-                  {user?.role === 'fieldSupervisor' && (
+                  {isUserFieldSupervisor && (
                     <DropdownMenuItem onClick={() => navigate('/field-supervisor')}>
                       <Plant className="h-4 w-4 mr-2" />
                       Supervisor Portal
@@ -460,24 +462,24 @@ const Navbar = () => {
                     <ShoppingCart className="h-4 w-4" />
                     My Orders
                   </Link>
-                  {user?.role === 'farmer' || user?.role === 'admin' ? (
+                  {(user?.roles?.includes('farmer') || user?.roles?.includes('admin')) && (
                     <Link to="/farmer-portal" className={cn(
                       "font-montserrat px-3 py-2 rounded-md font-medium flex items-center gap-1 hover:bg-farmfilo-lightGreen/30",
-                      isActive("/farmer-portal") ? "text-farmfilo-primary" : "text-gray-700"
+                      location.pathname === "/farmer-portal" ? "text-farmfilo-primary" : "text-gray-700"
                     )}>
                       <Users className="h-4 w-4" />
                       Farmer Portal
                     </Link>
-                  ) : null}
-                  {user?.role === 'fieldSupervisor' || user?.role === 'admin' ? (
+                  )}
+                  {(user?.roles?.includes('fieldSupervisor') || user?.roles?.includes('admin')) && (
                     <Link to="/field-supervisor" className={cn(
                       "font-montserrat px-3 py-2 rounded-md font-medium flex items-center gap-1 hover:bg-farmfilo-lightGreen/30",
-                      isActive("/field-supervisor") ? "text-farmfilo-primary" : "text-gray-700"
+                      location.pathname === "/field-supervisor" ? "text-farmfilo-primary" : "text-gray-700"
                     )}>
                       <Plant className="h-4 w-4" />
                       Field Supervisor
                     </Link>
-                  ) : null}
+                  )}
                   <Link to="/crop-guidance" className={cn(
                     "font-montserrat px-3 py-2 rounded-md font-medium flex items-center gap-1 hover:bg-farmfilo-lightGreen/30",
                     isActive("/crop-guidance") ? "text-farmfilo-primary" : "text-gray-700"

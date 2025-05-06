@@ -1,5 +1,5 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { toast } from 'react-toastify';
 
 export type UserRole = 'customer' | 'farmer' | 'fieldSupervisor' | 'admin';
 
@@ -22,6 +22,7 @@ interface AuthContextType {
   resetPassword: (token: string, password: string) => Promise<void>;
   updateProfile: (userData: Partial<User>) => Promise<void>;
   hasRole: (role: UserRole) => boolean;
+  socialLogin: (provider: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -46,6 +47,7 @@ const MOCK_USER: User = {
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   // Check for stored auth on mount
   useEffect(() => {
@@ -154,20 +156,50 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return user?.roles.includes(role) || false;
   };
 
+  const socialLogin = async (provider: string) => {
+    setIsLoading(true);
+    try {
+      // Implementation of social login
+      console.log(`Logging in with ${provider}`);
+      
+      // Mock successful login after a delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Set mock user data
+      setUser({
+        id: 'social-123',
+        name: 'Social User',
+        email: 'social@example.com',
+        roles: ['consumer']
+      });
+      
+      setIsAuthenticated(true);
+      toast.success(`Successfully logged in with ${provider}`);
+    } catch (error) {
+      console.error('Social login error:', error);
+      toast.error('Failed to login with social provider');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const value = {
+    user,
+    isAuthenticated: !!user,
+    isLoading,
+    login,
+    register,
+    logout,
+    forgotPassword,
+    resetPassword,
+    updateProfile,
+    hasRole,
+    socialLogin
+  };
+
   return (
     <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated: !!user,
-        isLoading,
-        login,
-        register,
-        logout,
-        forgotPassword,
-        resetPassword,
-        updateProfile,
-        hasRole
-      }}
+      value={value}
     >
       {children}
     </AuthContext.Provider>

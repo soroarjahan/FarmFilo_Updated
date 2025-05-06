@@ -54,7 +54,9 @@ const BidSection: React.FC<BidSectionProps> = ({ product }) => {
   };
   
   const auctionEndsDate = product.auctionEnds ? new Date(product.auctionEnds) : null;
-  const timeRemaining = auctionEndsDate ? formatDistanceToNow(auctionEndsDate) : '';
+  const timeRemaining = auctionEndsDate && product.auctionEnds 
+    ? formatDistanceToNow(product.auctionEnds) 
+    : '';
 
   return (
     <div className="border border-farmfilo-accent/50 rounded-lg p-6 bg-farmfilo-accent/10">
