@@ -77,15 +77,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const storedUser = localStorage.getItem('user');
         
         if (storedUser) {
-          setUser(JSON.parse(storedUser));
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser);
+          setIsAuthenticated(true);
+          console.log("User authenticated from localStorage:", parsedUser);
         } else {
-          // For development, use mock user
-          setUser(MOCK_USER);
-          localStorage.setItem('user', JSON.stringify(MOCK_USER));
+          // For development, we'll just clear the auth state
+          setUser(null);
+          setIsAuthenticated(false);
         }
       } catch (error) {
         console.error('Auth check failed:', error);
         setUser(null);
+        setIsAuthenticated(false);
       } finally {
         setIsLoading(false);
       }
@@ -107,8 +111,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           avatar: DEMO_ACCOUNTS.farmer.avatar
         };
         setUser(farmerUser);
+        setIsAuthenticated(true);
         localStorage.setItem('user', JSON.stringify(farmerUser));
         toast.success(`Welcome, ${farmerUser.name}!`);
+        console.log("Farmer logged in successfully:", farmerUser);
         return;
       } 
       
@@ -121,15 +127,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           avatar: DEMO_ACCOUNTS.supervisor.avatar
         };
         setUser(supervisorUser);
+        setIsAuthenticated(true);
         localStorage.setItem('user', JSON.stringify(supervisorUser));
         toast.success(`Welcome, ${supervisorUser.name}!`);
+        console.log("Supervisor logged in successfully:", supervisorUser);
         return;
       }
       
       // Mock successful login for other accounts
       await new Promise(resolve => setTimeout(resolve, 1000));
       setUser(MOCK_USER);
+      setIsAuthenticated(true);
       localStorage.setItem('user', JSON.stringify(MOCK_USER));
+      toast.success(`Welcome, ${MOCK_USER.name}!`);
+      console.log("Default user logged in successfully:", MOCK_USER);
     } catch (error) {
       console.error('Login failed:', error);
       throw new Error('Invalid email or password');
@@ -153,7 +164,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       };
       
       setUser(newUser);
+      setIsAuthenticated(true);
       localStorage.setItem('user', JSON.stringify(newUser));
+      toast.success(`Welcome to FarmFilo, ${name}!`);
+      console.log("User registered successfully:", newUser);
     } catch (error) {
       console.error('Registration failed:', error);
       throw new Error('Registration failed. Please try again.');
@@ -164,7 +178,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const logout = () => {
     setUser(null);
+    setIsAuthenticated(false);
     localStorage.removeItem('user');
+    toast.success('You have been logged out successfully');
+    console.log("User logged out");
   };
 
   const forgotPassword = async (email: string) => {
@@ -213,15 +230,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Set mock user data
-      setUser({
+      const socialUser: User = {
         id: 'social-123',
         name: 'Social User',
         email: 'social@example.com',
         roles: ['consumer' as UserRole]
-      });
+      };
       
+      setUser(socialUser);
       setIsAuthenticated(true);
+      localStorage.setItem('user', JSON.stringify(socialUser));
       toast.success(`Successfully logged in with ${provider}`);
+      console.log("Social login successful:", socialUser);
     } catch (error) {
       console.error('Social login error:', error);
       toast.error('Failed to login with social provider');
@@ -232,7 +252,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const value = {
     user,
-    isAuthenticated: !!user,
+    isAuthenticated,
     isLoading,
     login,
     register,

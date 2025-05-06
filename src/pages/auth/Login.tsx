@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -36,13 +35,21 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 const Login = () => {
-  const { login, socialLogin, isLoading } = useAuth();
+  const { login, socialLogin, isLoading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [authMode, setAuthMode] = useState<'email' | 'phone'>('email');
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
   
   const from = (location.state as any)?.from?.pathname || '/dashboard';
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(from, { replace: true });
+      console.log("User already authenticated, redirecting to:", from);
+    }
+  }, [isAuthenticated, navigate, from]);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -56,10 +63,11 @@ const Login = () => {
   const onSubmit = async (data: LoginFormValues) => {
     try {
       await login(data.email, data.password);
-      // Navigate is handled in the login function
+      console.log("Login successful, redirecting to:", from);
+      navigate(from, { replace: true });
     } catch (error) {
-      // Error is handled in the login function
       console.error('Login failed:', error);
+      toast.error('Invalid email or password');
     }
   };
 
@@ -67,7 +75,7 @@ const Login = () => {
     try {
       setSocialLoading(provider);
       await socialLogin(provider);
-      // Navigation handled in the socialLogin function
+      navigate(from, { replace: true });
     } catch (error) {
       console.error(`${provider} login failed:`, error);
     } finally {
