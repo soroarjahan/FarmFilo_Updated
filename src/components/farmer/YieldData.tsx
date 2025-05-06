@@ -129,15 +129,46 @@ const YieldData = () => {
                   <XAxis dataKey="month" />
                   <YAxis />
                   <Tooltip 
-                    content={(props) => {
-                      return props.active && props.payload && props.payload.length ? (
-                        <ChartTooltipContent {...props} indicator="dot" />
-                      ) : null;
+                    content={({ active, payload, label }) => {
+                      if (active && payload && payload.length) {
+                        return (
+                          <div className="rounded-lg border bg-background p-2 shadow-sm">
+                            <div className="font-medium">{label}</div>
+                            {payload.map((entry, index) => (
+                              <div key={`item-${index}`} className="flex items-center gap-2 text-sm">
+                                <div 
+                                  className="h-2 w-2 rounded-full"
+                                  style={{ backgroundColor: entry.color }}
+                                />
+                                <span>{entry.name === 'actual' ? 'Actual' : 'Expected'}: {entry.value} kg</span>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      }
+                      return null;
                     }}
                   />
                   <Legend 
                     content={(props) => {
-                      return <ChartLegendContent {...props} />;
+                      if (props.payload) {
+                        return (
+                          <div className="flex justify-center gap-4 pt-3">
+                            {props.payload.map((entry, index) => (
+                              <div key={`legend-${index}`} className="flex items-center gap-2">
+                                <div 
+                                  className="h-2 w-2 rounded-sm" 
+                                  style={{ backgroundColor: entry.color }}
+                                />
+                                <span className="text-sm">
+                                  {entry.value === 'actual' ? 'Actual Yield' : 'Expected Yield'}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      }
+                      return null;
                     }}
                   />
                   <Line
